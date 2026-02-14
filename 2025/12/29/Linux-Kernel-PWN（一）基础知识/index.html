@@ -133,15 +133,16 @@
         
         <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Linux Kernel PWN （一）基础知识">
+<meta property="og:title" content="[Linux-Kernel-PWN]Basic Knowledge">
 <meta property="og:url" content="https://hackc0der.github.io/2025/12/29/Linux-Kernel-PWN%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://hackc0der.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2025-12-29T12:48:39.000Z">
-<meta property="article:modified_time" content="2026-01-28T13:36:43.564Z">
+<meta property="article:modified_time" content="2026-02-14T02:25:15.732Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Linux Kernel PWN">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://hackc0der.github.io/images/redefine-og.webp">
     
@@ -155,7 +156,7 @@
     
     <title>
         
-            Linux Kernel PWN （一）基础知识 | HackC0der&#39;s Blog
+            [Linux-Kernel-PWN]Basic Knowledge | HackC0der&#39;s Blog
         
     </title>
 
@@ -198,7 +199,7 @@
 
     <script id="hexo-configurations">
     window.config = {"hostname":"hackc0der.github.io","root":"/","language":"zh-CN","path":"search.json"};
-    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":true},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":true,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":true},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"What you have done does make who you are...","subtitle":{"text":["明月几时有，把酒问青天","不知天上宫阙，今夕是何年？","我欲乘风归去，又恐琼楼玉宇，高处不胜寒。","起舞弄清影，何似在人间！","转朱阁，低绮户，照无眠。","不应有恨，何事长向别时圆？","人有悲欢离合，月有阴晴圆缺，此事古难全。","但愿人长久，千里共婵娟。","我步入丛林，因为我希望活得有意义…","我希望活得深刻，汲取生命所有的精髓！","把非生命的一切全都击溃…","以免在我生命终结时，发现自己从来没有活过…"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/HackC0der","instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"CSDN":{"path":"https://blog.csdn.net/Mr_Fmnwon?type=blog","icon":"fa-sharp fa-solid fa-browser"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2025/11/27 23:36:22"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":true,"title_alignment":"left","headings_top_spacing":{"h1":"2.6rem","h2":"2.2rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":true,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1300px","sidebar_width":"400px","hover":{"shadow":true,"scale":true},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":true,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":true},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"What you have done does make who you are...","subtitle":{"text":["明月几时有，把酒问青天","不知天上宫阙，今夕是何年？","我欲乘风归去，又恐琼楼玉宇，高处不胜寒。","起舞弄清影，何似在人间！","转朱阁，低绮户，照无眠。","不应有恨，何事长向别时圆？","人有悲欢离合，月有阴晴圆缺，此事古难全。","但愿人长久，千里共婵娟。","我步入丛林，因为我希望活得有意义…","我希望活得深刻，汲取生命所有的精髓！","把非生命的一切全都击溃…","以免在我生命终结时，发现自己从来没有活过…"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/HackC0der","instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"CSDN":{"path":"https://blog.csdn.net/Mr_Fmnwon?type=blog","icon":"fa-sharp fa-solid fa-browser"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2025/11/27 23:36:22"};
     window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
     window.data = {"masonry":false};
   </script>
@@ -505,7 +506,7 @@
 
         <div class="statistics flex justify-around my-2.5">
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">0</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">4</div>
         <div class="label text-third-text-color text-sm">标签</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
@@ -513,7 +514,7 @@
         <div class="label text-third-text-color text-sm">分类</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">5</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">6</div>
         <div class="label text-third-text-color text-sm">文章</div>
     </a>
 </div>
@@ -536,7 +537,7 @@
 		<div class="article-title relative w-full">
 			
 			<div class="w-full flex items-center pt-6 justify-start">
-				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">Linux Kernel PWN （一）基础知识</h1>
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">[Linux-Kernel-PWN]Basic Knowledge</h1>
 			</div>
 			
 		</div>
@@ -564,13 +565,24 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2026-01-28 21:36:43</span>
-            <span class="mobile">2026-01-28 21:36:43</span>
+            <span class="desktop">2026-02-14 10:25:15</span>
+            <span class="mobile">2026-02-14 10:25:15</span>
             <span class="hover-info">更新</span>
         </span>
     
 
     
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Linux-Kernel-PWN/">Linux Kernel PWN</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
     
 
     
@@ -620,7 +632,7 @@
 <li>用户态：CPU 运行在 ring3 + 用户进程运行环境上下文。</li>
 <li>内核态：CPU 运行在 ring0 + 内核代码运行环境上下文。</li>
 </ul>
-</li>
+<img lazyload src="/images/loading.svg" data-src="/2025/12/29/Linux-Kernel-PWN%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/ring_model.png" class title="Ring Model"></li>
 </ul>
 <h3 id="（一）特权级切换"><a href="#（一）特权级切换" class="headerlink" title="（一）特权级切换"></a>（一）<strong>特权级切换</strong></h3><p>CPU 在不同的特权级间进行切换主要有两个途径：</p>
 <ul>
@@ -654,16 +666,16 @@
 </ul>
 <h3 id="（二）虚拟内存空间"><a href="#（二）虚拟内存空间" class="headerlink" title="（二）虚拟内存空间"></a>（二）虚拟内存空间</h3><p>在现代操作系统中，计算机的虚拟内存地址空间通常被分为两块——供用户进程使用的用户空间（user space）与供操作系统内核使用的内核空间（kernel space），对于 Linux 而言，通常位于较高虚拟地址的虚拟内存空间被分配给内核使用，而位于较低虚拟地址的虚拟内存空间责备分配给用户进程使用。</p>
 <p>32 位下的虚拟内存空间布局如下：</p>
-
+<img lazyload src="/images/loading.svg" data-src="/2025/12/29/Linux-Kernel-PWN%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/mm_layout_32.png" class title="32 位系统内存布局">
 
 <p>64 位下的虚拟内存空间布局如下：</p>
-
+<img lazyload src="/images/loading.svg" data-src="/2025/12/29/Linux-Kernel-PWN%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/mm_layout_64.png" class title="64 位系统内存布局">
 
 <h3 id="（三）进程权限管理"><a href="#（三）进程权限管理" class="headerlink" title="（三）进程权限管理"></a>（三）进程权限管理</h3><p>内核 kernel 调度着一切的系统资源，并为用户应用程式提供运行环境，相应地，应用程式的权限也都是由 kernel 进行管理的。</p>
 <ul>
 <li><p><strong>进程描述符（process descriptor）</strong></p>
 <p>在内核中使用结构体 <code>task_struct</code> 表示一个进程，该结构体定义于内核源码 <code>include/linux/sched.h</code> 中</p>
-
+<img lazyload src="/images/loading.svg" data-src="/2025/12/29/Linux-Kernel-PWN%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/task_struct.png" class title="task_struct">
 </li>
 <li><p><strong>进程权限凭证（credential）</strong></p>
 <p><code>task_struct</code> 的源码中有如下代码：</p>
@@ -783,7 +795,7 @@
 <li><p><strong>KPTI</strong></p>
 <p>KPTI 即 <code>内核页表隔离</code>（Kernel page-table isolation），内核空间与用户空间分别使用两组不同的页表集，这对于内核的内存管理产生了根本性的变化。</p>
 <p>需要进行说明的是，<strong>在这两张页表上都有着对用户内存空间的完整映射，但在用户页表中只映射了少量的内核代码（例如系统调用入口点、中断处理等），而只有在内核页表中才有着对内核内存空间的完整映射，但两张页表都有着对用户内存空间的完整映射</strong>，如下图所示，左侧是未开启 KPTI 后的页表布局，右侧是开启了 KPTI 后的页表布局。</p>
-
+<img lazyload src="/images/loading.svg" data-src="/2025/12/29/Linux-Kernel-PWN%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/kpti.png" class title="KPTI">
 
 <p>KPTI 的发明主要是用来修复一个史诗级别的 CPU 硬件漏洞：Meltdown。简单理解就是利用 CPU 流水线设计中（乱序执行与预测执行）的漏洞来获取到用户态无法访问的内核空间的数据，属于侧信道攻击的一种。</p>
 <p><strong>KPTI 同时还令内核页表中属于用户地址空间的部分不再拥有执行权限，这使得 ret2usr 彻底成为过去式</strong>。</p>
@@ -808,7 +820,7 @@
 <li><p><strong>Random freelist</strong></p>
 <p>这种保护主要发生在 slub allocator 向 buddy system 申请到页框之后的处理过程中，对于未开启这种保护的一张完整的 slub，其上的 object 的连接顺序是线性连续的，但在开启了这种保护之后其上的 object 之间的连接顺序是随机的，这让攻击者无法直接预测下一个分配的 object 的地址。</p>
 <p>需要注意的是这种保护发生在 <strong>slub allocator 刚从 buddy system 拿到新 slub 的时候，运行时 freelist 的构成仍遵循 LIFO</strong>。</p>
-
+<img lazyload src="/images/loading.svg" data-src="/2025/12/29/Linux-Kernel-PWN%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/freelist_random.png" class title="Random freelist">
 </li>
 <li><p><strong>CONFIG_INIT_ON_ALLOC_DEFAULT_ON</strong></p>
 <p>当编译内核时开启了这个选项时，在内核进行 “堆内存” 分配时（包括 buddy system 和 slab allocator），<strong>会将被分配的内存上的内容进行清零</strong>，从而防止了利用未初始化内存进行数据泄露的情况。</p>
@@ -1480,14 +1492,14 @@
 		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
 			<div class="article-copyright-info-container">
     <ul>
-        <li><strong>标题:</strong> Linux Kernel PWN （一）基础知识</li>
+        <li><strong>标题:</strong> [Linux-Kernel-PWN]Basic Knowledge</li>
         <li><strong>作者:</strong> HackC0der</li>
         <li><strong>创建于
                 :</strong> 2025-12-29 20:48:39</li>
         
             <li>
                 <strong>更新于
-                    :</strong> 2026-01-28 21:36:43
+                    :</strong> 2026-02-14 10:25:15
             </li>
         
         <li>
@@ -1510,6 +1522,14 @@
 		
 
 		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Linux-Kernel-PWN/">#Linux Kernel PWN</a>&nbsp;
+			</li>
+			
+		</ul>
+		
 
 		
 
@@ -1522,7 +1542,7 @@
 						<i class="fa-solid fa-chevron-left"></i>
 					</span>
 					<span class="title flex justify-center items-center">
-						<span class="post-nav-title-item truncate max-w-48">Linux-Kernel-PWN（二）Kernel ROP - 从QWB2018-core入门</span>
+						<span class="post-nav-title-item truncate max-w-48">[Linux-Kernel-PWN] Kernel ROP</span>
 						<span class="post-nav-item">上一篇</span>
 					</span>
 				</a>
@@ -1532,7 +1552,7 @@
 			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
 				<a class="next" rel="next" href="/2025/12/21/2025RCTF-mstr/">
 					<span class="title flex justify-center items-center">
-						<span class="post-nav-title-item truncate max-w-48">2025RCTF-mstr.py | CPython-PWN</span>
+						<span class="post-nav-title-item truncate max-w-48">[CPython-PWN]2025RCTF-mstr.py</span>
 						<span class="post-nav-item">下一篇</span>
 					</span>
 					<span class="right arrow-icon flex justify-center items-center">
@@ -1546,47 +1566,6 @@
 
 
 		
-		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
-			<div class="comments-container mt-10 w-full ">
-    <div id="comment-anchor" class="w-full h-2.5"></div>
-    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
-        评论
-    </div>
-    
-
-        
-            
-    <div id="waline"></div>
-    <script type="module" data-swup-reload-script>
-      import { init } from '/js/libs/waline.mjs';
-
-      function loadWaline() {
-        init({
-          el: '#waline',
-          serverURL: 'https://example.example.com',
-          dark: 'body[class~="dark-mode"]',
-          reaction: false,
-          requiredMeta: ['nick', 'mail'],
-          emoji: [],
-                    lang: 'zh-CN',
-        });
-      }
-
-      if (typeof swup !== 'undefined') {
-        loadWaline();
-      } else {
-        window.addEventListener('DOMContentLoaded', loadWaline);
-      }
-    </script>
-
-
-
-        
-    
-</div>
-
-		</div>
-		
 	</div>
 
 	
@@ -1594,7 +1573,7 @@
 		<div class="post-toc-wrap">
 	<div class="post-toc">
 		<div class="toc-title">目录</div>
-		<div class="page-title">Linux Kernel PWN （一）基础知识</div>
+		<div class="page-title">[Linux-Kernel-PWN]Basic Knowledge</div>
 		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-text">一、基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E7%89%B9%E6%9D%83%E7%BA%A7%E5%88%87%E6%8D%A2"><span class="nav-text">（一）特权级切换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%A9%BA%E9%97%B4"><span class="nav-text">（二）虚拟内存空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E8%BF%9B%E7%A8%8B%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86"><span class="nav-text">（三）进程权限管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E5%9B%9B%EF%BC%89Loadable-Kernel-Modules-LKMs"><span class="nav-text">（四）Loadable Kernel Modules(LKMs)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%94%EF%BC%89%E5%86%85%E6%A0%B8%E4%BA%A4%E4%BA%92"><span class="nav-text">（五）内核交互</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E5%85%AD%EF%BC%89%E5%86%85%E6%A0%B8%E6%80%81%E5%B8%B8%E8%A7%81%E5%87%BD%E6%95%B0"><span class="nav-text">（六）内核态常见函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%83%EF%BC%89%E7%BC%93%E8%A7%A3%E6%8E%AA%E6%96%BD"><span class="nav-text">（七）缓解措施</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81Kernel-PWN-%E9%A2%98%E5%9E%8B"><span class="nav-text">二、Kernel PWN 题型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E5%B8%B8%E8%A7%84%E9%A2%98%E7%9B%AE%E6%96%87%E4%BB%B6"><span class="nav-text">（一）常规题目文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E8%BF%9C%E7%A8%8B%E4%B8%8A%E4%BC%A0"><span class="nav-text">（二）远程上传</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">三、环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81"><span class="nav-text">（一）内核源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%86%85%E6%A0%B8%E7%AD%BE%E5%90%8D%E9%AA%8C%E8%AF%81"><span class="nav-text">（二）内核签名验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E7%BC%96%E8%AF%91%E9%80%89%E9%A1%B9"><span class="nav-text">（三）编译选项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E5%9B%9B%EF%BC%89%E7%BC%96%E8%AF%91%E5%86%85%E6%A0%B8"><span class="nav-text">（四）编译内核</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%94%EF%BC%89%E4%B8%8B%E8%BD%BD%E5%86%85%E6%A0%B8"><span class="nav-text">（五）下载内核</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%9E%84%E5%BB%BA%EF%BC%88BusyBox%EF%BC%89"><span class="nav-text">四、文件系统构建（BusyBox）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E4%B8%8B%E8%BD%BD%E7%BC%96%E8%AF%91BusyBox"><span class="nav-text">（一）下载编译BusyBox</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-text">（二）配置文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E6%89%93%E5%8C%85%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-text">（三）打包文件系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">五、运行环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC"><span class="nav-text">启动脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="nav-text">共享文件夹</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%8F%AF%E8%A3%85%E8%BD%BD%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91"><span class="nav-text">六、可装载内核模块开发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97"><span class="nav-text">基本内核模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BE%9B%E7%94%A8%E6%88%B7%E6%80%81%E6%8E%A5%E5%8F%A3"><span class="nav-text">提供用户态接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#procfs%E6%8E%A5%E5%8F%A3"><span class="nav-text">procfs接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E6%A0%B8%E8%B0%83%E8%AF%95"><span class="nav-text">内核调试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#gdb%E8%B0%83%E8%AF%95"><span class="nav-text">gdb调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kgdb%E8%B0%83%E8%AF%95"><span class="nav-text">kgdb调试</span></a></li></ol></li></ol>
 
 	</div>
@@ -1622,11 +1601,11 @@
                 
                 <p class="post-count space-x-0.5">
                     <span>
-                        共撰写了 5 篇文章
+                        共撰写了 6 篇文章
                     </span>
                     
                         <span>
-                            共 42.5k 字
+                            共 49.8k 字
                         </span>
                     
                 </p>
@@ -1695,10 +1674,6 @@
 		
 
 		<!-- go comment -->
-		
-		<li class="go-comment">
-			<i class="fa-regular fa-comments"></i>
-		</li>
 		
 	</ul>
 </div>

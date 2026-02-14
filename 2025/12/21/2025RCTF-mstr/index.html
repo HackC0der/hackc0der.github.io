@@ -133,15 +133,16 @@
         
         <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="2025RCTF-mstr.py | CPython-PWN">
+<meta property="og:title" content="[CPython-PWN]2025RCTF-mstr.py">
 <meta property="og:url" content="https://hackc0der.github.io/2025/12/21/2025RCTF-mstr/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://hackc0der.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2025-12-21T14:59:39.000Z">
-<meta property="article:modified_time" content="2026-01-18T07:03:33.531Z">
+<meta property="article:modified_time" content="2026-02-14T02:31:23.767Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="CPython PWN">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://hackc0der.github.io/images/redefine-og.webp">
     
@@ -155,7 +156,7 @@
     
     <title>
         
-            2025RCTF-mstr.py | CPython-PWN | HackC0der&#39;s Blog
+            [CPython-PWN]2025RCTF-mstr.py | HackC0der&#39;s Blog
         
     </title>
 
@@ -198,7 +199,7 @@
 
     <script id="hexo-configurations">
     window.config = {"hostname":"hackc0der.github.io","root":"/","language":"zh-CN","path":"search.json"};
-    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":false,"title_alignment":"left","headings_top_spacing":{"h1":"3.2rem","h2":"2.4rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":false,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1000px","sidebar_width":"210px","hover":{"shadow":true,"scale":true},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":true,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":true},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"What you have done does make who you are...","subtitle":{"text":["明月几时有，把酒问青天","不知天上宫阙，今夕是何年？","我欲乘风归去，又恐琼楼玉宇，高处不胜寒。","起舞弄清影，何似在人间！","转朱阁，低绮户，照无眠。","不应有恨，何事长向别时圆？","人有悲欢离合，月有阴晴圆缺，此事古难全。","但愿人长久，千里共婵娟。","我步入丛林，因为我希望活得有意义…","我希望活得深刻，汲取生命所有的精髓！","把非生命的一切全都击溃…","以免在我生命终结时，发现自己从来没有活过…"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/HackC0der","instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"CSDN":{"path":"https://blog.csdn.net/Mr_Fmnwon?type=blog","icon":"fa-sharp fa-solid fa-browser"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2025/11/27 23:36:22"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":true,"title_alignment":"left","headings_top_spacing":{"h1":"2.6rem","h2":"2.2rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":true,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1300px","sidebar_width":"400px","hover":{"shadow":true,"scale":true},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":true,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":true},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"What you have done does make who you are...","subtitle":{"text":["明月几时有，把酒问青天","不知天上宫阙，今夕是何年？","我欲乘风归去，又恐琼楼玉宇，高处不胜寒。","起舞弄清影，何似在人间！","转朱阁，低绮户，照无眠。","不应有恨，何事长向别时圆？","人有悲欢离合，月有阴晴圆缺，此事古难全。","但愿人长久，千里共婵娟。","我步入丛林，因为我希望活得有意义…","我希望活得深刻，汲取生命所有的精髓！","把非生命的一切全都击溃…","以免在我生命终结时，发现自己从来没有活过…"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":{"github":"https://github.com/HackC0der","instagram":null,"zhihu":null,"twitter":null,"email":null},"qrs":{"weixin":null}}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1"}},"version":"2.8.5","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"CSDN":{"path":"https://blog.csdn.net/Mr_Fmnwon?type=blog","icon":"fa-sharp fa-solid fa-browser"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur"},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footerStart":"2025/11/27 23:36:22"};
     window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
     window.data = {"masonry":false};
   </script>
@@ -505,7 +506,7 @@
 
         <div class="statistics flex justify-around my-2.5">
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">0</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">4</div>
         <div class="label text-third-text-color text-sm">标签</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
@@ -513,7 +514,7 @@
         <div class="label text-third-text-color text-sm">分类</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">5</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">6</div>
         <div class="label text-third-text-color text-sm">文章</div>
     </a>
 </div>
@@ -536,7 +537,7 @@
 		<div class="article-title relative w-full">
 			
 			<div class="w-full flex items-center pt-6 justify-start">
-				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">2025RCTF-mstr.py | CPython-PWN</h1>
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">[CPython-PWN]2025RCTF-mstr.py</h1>
 			</div>
 			
 		</div>
@@ -564,13 +565,24 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2026-01-18 15:03:33</span>
-            <span class="mobile">2026-01-18 15:03:33</span>
+            <span class="desktop">2026-02-14 10:31:23</span>
+            <span class="mobile">2026-02-14 10:31:23</span>
             <span class="hover-info">更新</span>
         </span>
     
 
     
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/CPython-PWN/">CPython PWN</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
     
 
     
@@ -607,7 +619,7 @@
 <div class="code-container" data-rel="Python"><figure class="iseeu highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ctypes</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> <span class="type">Union</span>, <span class="type">List</span>, <span class="type">Dict</span></span><br><span class="line"></span><br><span class="line">STRPTR_OFFSET = <span class="number">0x28</span> </span><br><span class="line">LENPTR_OFFSET = <span class="number">0x10</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MutableStr</span>:</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MutableStr</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, data:<span class="built_in">str</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.data = data</span><br><span class="line">        <span class="variable language_">self</span>.base_ptr = <span class="built_in">id</span>(<span class="variable language_">self</span>.data)</span><br><span class="line">        <span class="variable language_">self</span>.max_size_str = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">set_max_size</span>(<span class="params">self, max_size_str</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">int</span>(max_size_str) &lt; ((<span class="built_in">len</span>(<span class="variable language_">self</span>)+<span class="number">7</span>) &amp; ~<span class="number">7</span>):</span><br><span class="line">            <span class="variable language_">self</span>.max_size_str = max_size_str</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;can&#x27;t set max_size: too big&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.data</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.__repr__()        </span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.base_ptr <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        ptr = ctypes.cast(<span class="variable language_">self</span>.base_ptr + LENPTR_OFFSET, ctypes.POINTER(ctypes.c_int64))</span><br><span class="line">        <span class="keyword">return</span> ptr[<span class="number">0</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, key:<span class="built_in">int</span></span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(key, <span class="built_in">int</span>):</span><br><span class="line">            <span class="keyword">raise</span> NotImplementedError</span><br><span class="line">        <span class="keyword">if</span> key &gt;= <span class="built_in">len</span>(<span class="variable language_">self</span>) <span class="keyword">or</span> key &lt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">raise</span> RuntimeError(<span class="string">&quot;get overflow&quot;</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.data[key]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__setitem__</span>(<span class="params">self, key:<span class="built_in">int</span>, value:<span class="built_in">int</span></span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(value, <span class="built_in">int</span>):</span><br><span class="line">            <span class="keyword">raise</span> NotImplementedError(<span class="string">&quot;only support integer value&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(key, <span class="built_in">int</span>):</span><br><span class="line">            <span class="keyword">raise</span> NotImplementedError(<span class="string">&quot;only support integer key&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> key &gt;= <span class="built_in">len</span>(<span class="variable language_">self</span>) <span class="keyword">or</span> key &lt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">raise</span> RuntimeError(<span class="string">f&quot;set overflow: length:<span class="subst">&#123;<span class="built_in">len</span>(self)&#125;</span>, key:<span class="subst">&#123;key&#125;</span>&quot;</span>)</span><br><span class="line">        </span><br><span class="line">        strptr = ctypes.cast(<span class="variable language_">self</span>.base_ptr + STRPTR_OFFSET, ctypes.POINTER(ctypes.c_char))</span><br><span class="line">        strptr[key] = value</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__add__</span>(<span class="params">self, other:<span class="type">Union</span>[<span class="built_in">str</span>,MutableStr]</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isinstance</span>(other, <span class="built_in">str</span>):</span><br><span class="line">            <span class="keyword">return</span> MutableStr(<span class="variable language_">self</span>.data + other)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isinstance</span>(other, MutableStr):</span><br><span class="line">            <span class="keyword">return</span> MutableStr(<span class="variable language_">self</span>.data + other.data)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_add_str</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.max_size_str == <span class="string">&quot;&quot;</span>:</span><br><span class="line">            max_size = (<span class="built_in">len</span>(<span class="variable language_">self</span>)+<span class="number">7</span>) &amp; ~<span class="number">7</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            max_size = <span class="built_in">int</span>(<span class="variable language_">self</span>.max_size_str)</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(<span class="variable language_">self</span>)+<span class="built_in">len</span>(other) &lt;= max_size:</span><br><span class="line">            other_len = <span class="built_in">len</span>(other)</span><br><span class="line">            strptr = ctypes.cast(<span class="variable language_">self</span>.base_ptr + STRPTR_OFFSET, ctypes.POINTER(ctypes.c_char))</span><br><span class="line">            otherstrptr = ctypes.cast(<span class="built_in">id</span>(other) + STRPTR_OFFSET, ctypes.POINTER(ctypes.c_char))</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(other_len):</span><br><span class="line">                strptr[i+<span class="built_in">len</span>(<span class="variable language_">self</span>)] = otherstrptr[i]</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(<span class="variable language_">self</span>)+other_len &lt; max_size:</span><br><span class="line">                <span class="comment"># strptr[len(self)+other_len] = 0 </span></span><br><span class="line">                <span class="keyword">pass</span></span><br><span class="line">            ctypes.cast(<span class="variable language_">self</span>.base_ptr + LENPTR_OFFSET, ctypes.POINTER(ctypes.c_int64))[<span class="number">0</span>] += other_len</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;Full!&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__iadd__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isinstance</span>(other, <span class="built_in">str</span>):</span><br><span class="line">            <span class="keyword">return</span> <span class="variable language_">self</span>._add_str(other)</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">isinstance</span>(other, MutableStr):</span><br><span class="line">            <span class="keyword">return</span> <span class="variable language_">self</span>._add_str(other.data)</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">new_mstring</span>(<span class="params">data:<span class="built_in">str</span></span>) -&gt; MutableStr:</span><br><span class="line">    <span class="keyword">return</span> MutableStr(data)</span><br><span class="line"></span><br><span class="line">mstrings:<span class="type">List</span>[MutableStr] = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            cmd, data, *values = <span class="built_in">input</span>(<span class="string">&quot;&gt; &quot;</span>).split()</span><br><span class="line">            <span class="keyword">if</span> cmd == <span class="string">&quot;new&quot;</span>:</span><br><span class="line">                mstrings.append(new_mstring(data))</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> cmd == <span class="string">&quot;set_max&quot;</span>:</span><br><span class="line">                idx = <span class="built_in">int</span>(values[<span class="number">0</span>])</span><br><span class="line">                <span class="keyword">if</span> idx &gt;= <span class="built_in">len</span>(mstrings) <span class="keyword">or</span> idx &lt; <span class="number">0</span>:</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;invalid index&quot;</span>)</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                mstrings[idx].set_max_size(data)</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> cmd == <span class="string">&quot;+&quot;</span>:</span><br><span class="line">                idx1 = <span class="built_in">int</span>(data)</span><br><span class="line">                idx2 = <span class="built_in">int</span>(values[<span class="number">0</span>])</span><br><span class="line">                <span class="keyword">if</span> idx1 &lt; <span class="number">0</span> <span class="keyword">or</span> idx1 &gt;= <span class="built_in">len</span>(mstrings) <span class="keyword">or</span> idx2 &lt; <span class="number">0</span> <span class="keyword">or</span> idx2 &gt;= <span class="built_in">len</span>(mstrings):</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;invalid index&quot;</span>)</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                mstrings.append(mstrings[idx1]+mstrings[idx2])</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> cmd == <span class="string">&quot;+=&quot;</span>:</span><br><span class="line">                idx1 = <span class="built_in">int</span>(data)</span><br><span class="line">                idx2 = <span class="built_in">int</span>(values[<span class="number">0</span>])</span><br><span class="line">                <span class="keyword">if</span> idx1 &lt; <span class="number">0</span> <span class="keyword">or</span> idx1 &gt;= <span class="built_in">len</span>(mstrings) <span class="keyword">or</span> idx2 &lt; <span class="number">0</span> <span class="keyword">or</span> idx2 &gt;= <span class="built_in">len</span>(mstrings):</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;invalid index&quot;</span>)</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                mstrings[idx1] += mstrings[idx2]</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> cmd == <span class="string">&quot;print_max&quot;</span>:</span><br><span class="line">                idx = <span class="built_in">int</span>(data)</span><br><span class="line">                <span class="keyword">if</span> idx &gt;= <span class="built_in">len</span>(mstrings) <span class="keyword">or</span> idx &lt; <span class="number">0</span>:</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;invalid index&quot;</span>)</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                <span class="built_in">print</span>(mstrings[idx].max_size_str)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> cmd == <span class="string">&quot;print&quot;</span>:</span><br><span class="line">                idx = <span class="built_in">int</span>(data)</span><br><span class="line">                <span class="keyword">if</span> idx &gt;= <span class="built_in">len</span>(mstrings) <span class="keyword">or</span> idx &lt; <span class="number">0</span>:</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;invalid index&quot;</span>)</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                <span class="built_in">print</span>(mstrings[idx].data)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> cmd == <span class="string">&quot;modify&quot;</span>:</span><br><span class="line">                idx = <span class="built_in">int</span>(data)</span><br><span class="line">                offset = <span class="built_in">int</span>(values[<span class="number">0</span>])</span><br><span class="line">                val = values[<span class="number">1</span>]</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">if</span> idx &gt;= <span class="built_in">len</span>(mstrings) <span class="keyword">or</span> idx &lt; <span class="number">0</span>:</span><br><span class="line">                    <span class="built_in">print</span>(<span class="string">&quot;invalid index&quot;</span>)</span><br><span class="line">                    <span class="keyword">continue</span></span><br><span class="line">                mstrings[idx][offset] = <span class="built_in">int</span>(val)</span><br><span class="line">        <span class="keyword">except</span> EOFError:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;error: <span class="subst">&#123;e&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;hello!&quot;</span>, flush=<span class="literal">True</span>)</span><br><span class="line">main()</span><br><span class="line"></span><br></pre></td></tr></table></figure></div>
 
 <p>在Python中，字符串（String）是一种<strong>不可变</strong>的数据类型。这意味着一旦创建了一个字符串对象，它的值就不能被改变。如果尝试修改字符串的内容，Python会创建一个新的字符串对象，而不是修改原有的字符串。本题基于字符串对象，利用ctype等底层接口实现了一个可边长的字符串，肯定会出现一些问题。</p>
-<h2 id="Python的字符串实现"><a href="#Python的字符串实现" class="headerlink" title="Python的字符串实现"></a>Python的字符串实现</h2><blockquote>
+<h2 id="一、Python的字符串实现"><a href="#一、Python的字符串实现" class="headerlink" title="一、Python的字符串实现"></a>一、Python的字符串实现</h2><blockquote>
 <ul>
 <li><p>type <strong>PyASCIIObject</strong> </p>
 </li>
@@ -820,14 +832,14 @@
 		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
 			<div class="article-copyright-info-container">
     <ul>
-        <li><strong>标题:</strong> 2025RCTF-mstr.py | CPython-PWN</li>
+        <li><strong>标题:</strong> [CPython-PWN]2025RCTF-mstr.py</li>
         <li><strong>作者:</strong> HackC0der</li>
         <li><strong>创建于
                 :</strong> 2025-12-21 22:59:39</li>
         
             <li>
                 <strong>更新于
-                    :</strong> 2026-01-18 15:03:33
+                    :</strong> 2026-02-14 10:31:23
             </li>
         
         <li>
@@ -850,6 +862,14 @@
 		
 
 		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/CPython-PWN/">#CPython PWN</a>&nbsp;
+			</li>
+			
+		</ul>
+		
 
 		
 
@@ -862,7 +882,7 @@
 						<i class="fa-solid fa-chevron-left"></i>
 					</span>
 					<span class="title flex justify-center items-center">
-						<span class="post-nav-title-item truncate max-w-48">Linux Kernel PWN （一）基础知识</span>
+						<span class="post-nav-title-item truncate max-w-48">[Linux-Kernel-PWN]Basic Knowledge</span>
 						<span class="post-nav-item">上一篇</span>
 					</span>
 				</a>
@@ -886,47 +906,6 @@
 
 
 		
-		<div class="comment-container px-2 sm:px-6 md:px-8 pb-8">
-			<div class="comments-container mt-10 w-full ">
-    <div id="comment-anchor" class="w-full h-2.5"></div>
-    <div class="comment-area-title w-full my-1.5 md:my-2.5 text-xl md:text-3xl font-bold">
-        评论
-    </div>
-    
-
-        
-            
-    <div id="waline"></div>
-    <script type="module" data-swup-reload-script>
-      import { init } from '/js/libs/waline.mjs';
-
-      function loadWaline() {
-        init({
-          el: '#waline',
-          serverURL: 'https://example.example.com',
-          dark: 'body[class~="dark-mode"]',
-          reaction: false,
-          requiredMeta: ['nick', 'mail'],
-          emoji: [],
-                    lang: 'zh-CN',
-        });
-      }
-
-      if (typeof swup !== 'undefined') {
-        loadWaline();
-      } else {
-        window.addEventListener('DOMContentLoaded', loadWaline);
-      }
-    </script>
-
-
-
-        
-    
-</div>
-
-		</div>
-		
 	</div>
 
 	
@@ -934,8 +913,8 @@
 		<div class="post-toc-wrap">
 	<div class="post-toc">
 		<div class="toc-title">目录</div>
-		<div class="page-title">2025RCTF-mstr.py | CPython-PWN</div>
-		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Python%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AE%9E%E7%8E%B0"><span class="nav-text">Python的字符串实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%B0%B8%E7%94%9F%E5%AF%B9%E8%B1%A1"><span class="nav-text">二、永生对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E9%95%BF%E5%BA%A6"><span class="nav-text">三、字符编码长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81exploit"><span class="nav-text">四、exploit</span></a></li></ol>
+		<div class="page-title">[CPython-PWN]2025RCTF-mstr.py</div>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81Python%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AE%9E%E7%8E%B0"><span class="nav-text">一、Python的字符串实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%B0%B8%E7%94%9F%E5%AF%B9%E8%B1%A1"><span class="nav-text">二、永生对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E9%95%BF%E5%BA%A6"><span class="nav-text">三、字符编码长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81exploit"><span class="nav-text">四、exploit</span></a></li></ol>
 
 	</div>
 </div>
@@ -962,11 +941,11 @@
                 
                 <p class="post-count space-x-0.5">
                     <span>
-                        共撰写了 5 篇文章
+                        共撰写了 6 篇文章
                     </span>
                     
                         <span>
-                            共 42.5k 字
+                            共 49.8k 字
                         </span>
                     
                 </p>
@@ -1035,10 +1014,6 @@
 		
 
 		<!-- go comment -->
-		
-		<li class="go-comment">
-			<i class="fa-regular fa-comments"></i>
-		</li>
 		
 	</ul>
 </div>

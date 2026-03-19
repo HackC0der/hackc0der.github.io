@@ -94,7 +94,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://hackc0der.github.io/images/redefine-og.webp">
 <meta property="article:published_time" content="2026-03-16T02:16:00.000Z">
-<meta property="article:modified_time" content="2026-03-16T02:30:17.918Z">
+<meta property="article:modified_time" content="2026-03-16T07:33:48.229Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="Claude Code">
 <meta name="twitter:card" content="summary">
@@ -468,7 +468,7 @@
         <div class="label text-third-text-color text-sm">分类</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">9</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">11</div>
         <div class="label text-third-text-color text-sm">文章</div>
     </a>
 </div>
@@ -519,8 +519,8 @@
     
         <span class="article-date article-meta-item">
             <i class="fa-regular fa-wrench"></i>&nbsp;
-            <span class="desktop">2026-03-16 10:30:17</span>
-            <span class="mobile">2026-03-16 10:30:17</span>
+            <span class="desktop">2026-03-16 15:33:48</span>
+            <span class="mobile">2026-03-16 15:33:48</span>
             <span class="hover-info">更新</span>
         </span>
     
@@ -542,12 +542,12 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>1.1k 字</span>
+            <i class="fa-regular fa-typewriter"></i>&nbsp;<span>1.5k 字</span>
         </span>
     
     
         <span class="article-min2read article-meta-item">
-            <i class="fa-regular fa-clock"></i>&nbsp;<span>5 分钟</span>
+            <i class="fa-regular fa-clock"></i>&nbsp;<span>6 分钟</span>
         </span>
     
     
@@ -627,6 +627,53 @@
 
 <p>由<code>claude code</code>自行总结<code>pwntools</code>项目写出的技能包，参考<code>anthropics/skills</code>的标准写法完成</p>
 <p>欢迎读者提出意见建议、提交PR！</p>
+<h3 id="find-skills"><a href="#find-skills" class="headerlink" title="find-skills"></a>find-skills</h3><blockquote>
+<p><a class="link" target="_blank" rel="noopener" href="https://juejin.cn/post/7614566158142259209">find-skills: 使用 skills 快速找到最匹配 skillsfind-skills 解决了我们找 skil - 掘金<i class="fa-solid fa-arrow-up-right ml-[0.2em] font-light align-text-top text-[0.7em] link-icon"></i></a></p>
+</blockquote>
+<p>安装<code>skills</code></p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx skills</span><br></pre></td></tr></table></figure></div>
+
+<p>安装<code>find-skills</code></p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx skills add https://github.com/vercel-labs/skills --skill find-skills</span><br></pre></td></tr></table></figure></div>
+
+<p>运行后，它有如下几个选项</p>
+<ul>
+<li>选择安装的Agent (Which agents do you want to install to?)</li>
+</ul>
+<blockquote>
+<p>Amp, Cline, Codex, Cursor, Gemini CLI, GitHub Copilot, Kimi Code CLI, OpenCode, Claude Code</p>
+</blockquote>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/16/Claude%20Code/image-20260316152940883.png" class title="image-20260316152940883">
+
+<ul>
+<li>安装范围 (Installation scope)</li>
+</ul>
+<blockquote>
+<p>全局&#x2F;项目</p>
+</blockquote>
+<ul>
+<li>安装方法(Installation method)</li>
+</ul>
+<blockquote>
+<p><strong>SymLink</strong>：通过创建符号链接实现集中管理，保证单一真实来源且便于统一更新</p>
+<p><strong>Copy to all agents</strong> ：将文件直接复制到所有 Agent 节点，每个节点独立存储</p>
+</blockquote>
+<img lazyload src="/images/loading.svg" data-src="/2026/03/16/Claude%20Code/image-20260316153025200.png" class title="image-20260316153025200">
+
+<p><strong>用 find-skills 找 skills</strong></p>
+<ul>
+<li>npx 方式</li>
+</ul>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npx skills find <span class="string">&quot;&#123;your keyword&#125;&quot;</span></span><br><span class="line"><span class="comment">#例如：npx skills find &quot;laravel package quality analysis&quot;</span></span><br></pre></td></tr></table></figure></div>
+
+<ul>
+<li>agent中自然语言描述</li>
+</ul>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ claude</span><br><span class="line">&gt; 查找可以检测 laravel 扩展质量的技能</span><br></pre></td></tr></table></figure></div>
+
+<p><strong>命令清单</strong></p>
+<div class="code-container" data-rel="Bash"><figure class="iseeu highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">$ npx skills add &lt;package&gt;    </span><br><span class="line">2    添加新技能</span><br><span class="line">3</span><br><span class="line">4$ npx skills remove    </span><br><span class="line">5    移除已安装的技能</span><br><span class="line">6</span><br><span class="line">7$ npx skills list    </span><br><span class="line">8    列出已安装的技能</span><br><span class="line">9</span><br><span class="line">10$ npx skills find [query]    </span><br><span class="line">11    搜索技能</span><br><span class="line">12</span><br><span class="line">13$ npx skills check    </span><br><span class="line">14    检查更新</span><br><span class="line">15</span><br><span class="line">16$ npx skills update    </span><br><span class="line">17    更新所有技能</span><br><span class="line">18</span><br><span class="line">19$ npx skills experimental_install    </span><br><span class="line">20    从 skills-lock.json 恢复安装</span><br><span class="line">21</span><br><span class="line">22$ npx skills init [name]    </span><br><span class="line">23    创建新技能</span><br><span class="line">24</span><br><span class="line">25$ npx skills experimental_sync    </span><br><span class="line">26    从 node_modules 同步技能</span><br></pre></td></tr></table></figure></div>
+
 
 		</div>
 
@@ -641,7 +688,7 @@
         
             <li>
                 <strong>更新于
-                    :</strong> 2026-03-16 10:30:17
+                    :</strong> 2026-03-16 15:33:48
             </li>
         
         <li>
@@ -678,6 +725,18 @@
 		
 		<div class="article-nav my-8 flex justify-between items-center px-2 sm:px-6 md:px-8">
 			
+			<div class="article-prev border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
+				<a class="prev" rel="prev" href="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/">
+					<span class="left arrow-icon flex justify-center items-center">
+						<i class="fa-solid fa-chevron-left"></i>
+					</span>
+					<span class="title flex justify-center items-center">
+						<span class="post-nav-title-item truncate max-w-48">[Linux-Kernel-PWN] ret2dir &amp;&amp; pt_regs</span>
+						<span class="post-nav-item">上一篇</span>
+					</span>
+				</a>
+			</div>
+			
 			
 			<div class="article-next border-border-color shadow-redefine-flat shadow-shadow-color-2 rounded-medium px-4 py-2 hover:shadow-redefine-flat-hover hover:shadow-shadow-color-2">
 				<a class="next" rel="next" href="/2026/03/05/Linux-Kernel-PWN%EF%BC%88%E5%9B%9B%EF%BC%89KPTI%20bypass/">
@@ -704,7 +763,7 @@
 	<div class="post-toc">
 		<div class="toc-title">目录</div>
 		<div class="page-title">Claude Code 使用笔记</div>
-		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81Claude-Code%E5%AE%89%E8%A3%85%E4%B8%8E%E5%85%8D%E7%99%BB%E5%BD%95"><span class="nav-text">一、Claude Code安装与免登录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%8D%E7%99%BB%E5%BD%95"><span class="nav-text">免登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0"><span class="nav-text">更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81skills%E6%8E%A8%E8%8D%90"><span class="nav-text">二、skills推荐</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#anthropics-skills"><span class="nav-text">anthropics&#x2F;skills</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ECC%EF%BC%9Aeverything-claude-code"><span class="nav-text">ECC：everything-claude-code</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Planning-with-Files"><span class="nav-text">Planning with Files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pwntools-skills"><span class="nav-text">pwntools-skills</span></a></li></ol></li></ol>
+		<ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81Claude-Code%E5%AE%89%E8%A3%85%E4%B8%8E%E5%85%8D%E7%99%BB%E5%BD%95"><span class="nav-text">一、Claude Code安装与免登录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%8D%E7%99%BB%E5%BD%95"><span class="nav-text">免登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0"><span class="nav-text">更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81skills%E6%8E%A8%E8%8D%90"><span class="nav-text">二、skills推荐</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#anthropics-skills"><span class="nav-text">anthropics&#x2F;skills</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ECC%EF%BC%9Aeverything-claude-code"><span class="nav-text">ECC：everything-claude-code</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Planning-with-Files"><span class="nav-text">Planning with Files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pwntools-skills"><span class="nav-text">pwntools-skills</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#find-skills"><span class="nav-text">find-skills</span></a></li></ol></li></ol>
 
 	</div>
 </div>
@@ -732,11 +791,11 @@
                 
                 <p class="post-count space-x-0.5">
                     <span>
-                        共撰写了 9 篇文章
+                        共撰写了 11 篇文章
                     </span>
                     
                         <span>
-                            共 57.5k 字
+                            共 63.9k 字
                         </span>
                     
                 </p>

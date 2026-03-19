@@ -573,7 +573,7 @@
         <div class="label text-third-text-color text-sm">分类</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">9</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">11</div>
         <div class="label text-third-text-color text-sm">文章</div>
     </a>
 </div>
@@ -613,7 +613,7 @@
         <div class="label text-third-text-color text-sm">分类</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">9</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">11</div>
         <div class="label text-third-text-color text-sm">文章</div>
     </a>
 </div>
@@ -628,6 +628,120 @@
 			<div class="main-content">
 				<div class="home-content-container">
     <ul class="home-article-list">
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2026/03/19/Linux-Kernel-PWN-Tricks/">
+                            [Linux-Kernel-PWN] 技巧札记
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            
+                            一、常用工具image解包脚本经典的 Linux 内核工具 extract-vmlinux，核心作用是从压缩的 Linux 内核镜像中提取出未压缩的 vmlinux（内核可执行文件）。
+这个脚本的目标是：自动识别内核镜像的压缩格式，解压并提取出完整的、可识别的 ELF 格式 vmlinux 文件。
+它支持识别并解压多种压缩格式的内核镜像（gzip&#x2F;xz&#x2F;bzip2&#x2...
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Thu Mar 19 2026 07:48:40 GMT+0800">
+                
+                    2026-03-19
+                
+            </span>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Linux-Kernel-PWN/">Linux Kernel PWN</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2026/03/19/Linux-Kernel-PWN-Tricks/">阅读全文<span class="seo-reader-text">[Linux-Kernel-PWN] 技巧札记</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/">
+                            [Linux-Kernel-PWN] ret2dir &amp;&amp; pt_regs
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            
+                            
+
+Linux内核 物理内存映射 - 知乎
+【PWN.0x00】Linux Kernel Pwn I：Basic Exploit to Kernel Pwn in CTF - arttnba3’s blog
+ret2dir - CTF Wiki
+
+
+
+ret2dir（return-to-direct-mapped memory）是哥伦比亚大学网络安全实验室在 2014 年提出的一种辅助攻击手...
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Wed Mar 18 2026 08:48:40 GMT+0800">
+                
+                    2026-03-18
+                
+            </span>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Linux-Kernel-PWN/">Linux Kernel PWN</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2026/03/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%94%EF%BC%89ret2dir/">阅读全文<span class="seo-reader-text">[Linux-Kernel-PWN] ret2dir &amp;&amp; pt_regs</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
         
             <li class="home-article-item">
 
@@ -1082,68 +1196,11 @@ Kernel pwn CTF 入门 | Kiprey’s Blog
                 </div>
             </li>
         
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
-                    <h3 class="home-article-title">
-                        <a href="/2025/12/01/The-Art-of-Shellcode/">
-                            The Art of Shellcode
-                        </a>
-                    </h3>
-
-                    <div class="home-article-content markdown-body">
-                        
-                            
-                            一、使用汇编器生成 shellcode
-特别参考佬的博客：
-1、The art of shellcode - LynneHuan - 博客园
-2、V3rdant’s Blog
-
-（一）汇编1、汇编格式123456section .text       ; 代码段开始global _start       ; 声明程序入口点_start:             ; 程序入口标签    ; 这...
-                        
-                    </div>
-
-                    <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Mon Dec 01 2025 09:51:46 GMT+0800">
-                
-                    2025-12-01
-                
-            </span>
-        </span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fa-solid fa-tags"></i>&nbsp;
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/Shellcode/">Shellcode</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2025/12/01/The-Art-of-Shellcode/">阅读全文<span class="seo-reader-text">The Art of Shellcode</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-                </div>
-            </li>
-        
     </ul>
 
     <div class="home-paginator px-7 py-5">
         <div class="paginator">
-	<span class="page-number current">1</span>
+	<span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa-regular fa-angle-right"></i></a>
 </div>
   
     </div>
@@ -1169,11 +1226,11 @@ Kernel pwn CTF 入门 | Kiprey’s Blog
                 
                 <p class="post-count space-x-0.5">
                     <span>
-                        共撰写了 9 篇文章
+                        共撰写了 11 篇文章
                     </span>
                     
                         <span>
-                            共 57.5k 字
+                            共 63.9k 字
                         </span>
                     
                 </p>

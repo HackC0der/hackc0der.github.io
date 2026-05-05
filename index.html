@@ -573,7 +573,7 @@
         <div class="label text-third-text-color text-sm">分类</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">12</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">15</div>
         <div class="label text-third-text-color text-sm">文章</div>
     </a>
 </div>
@@ -613,7 +613,7 @@
         <div class="label text-third-text-color text-sm">分类</div>
     </a>
     <a class="item tag-count-item flex flex-col justify-center items-center w-20" href="/archives">
-        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">12</div>
+        <div class="number text-2xl sm:text-xl text-second-text-color font-semibold">15</div>
         <div class="label text-third-text-color text-sm">文章</div>
     </a>
 </div>
@@ -628,6 +628,173 @@
 			<div class="main-content">
 				<div class="home-content-container">
     <ul class="home-article-list">
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2026/05/05/Linux-Kernel-PWN%EF%BC%88%E5%85%AD%EF%BC%89Heap%20Spray/">
+                            [Linux-Kernel-PWN] Heap Spray
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            
+                            
+堆喷射（heap spraying）指的是一种辅助攻击手法：「通过大量分配相同的结构体来达成某种特定的内存布局，从而帮助攻击者完成后续的利用过程」，常见于如下场景：
+
+你有一个 UAF，但是你无法通过少量内存分配拿到该结构体（例如该 object 不属于当前 freelist 且释放后会回到 node 上，或是像 add_key() 那样会被一直卡在第一个临时结构体上），这时你可以通过堆喷...
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Tue May 05 2026 13:15:29 GMT+0800">
+                
+                    2026-05-05
+                
+            </span>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Linux-Kernel-PWN/">Linux Kernel PWN</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2026/05/05/Linux-Kernel-PWN%EF%BC%88%E5%85%AD%EF%BC%89Heap%20Spray/">阅读全文<span class="seo-reader-text">[Linux-Kernel-PWN] Heap Spray</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2026/05/05/%E5%86%85%E6%A0%B8%E4%B8%AD%E7%9A%84pipe%E7%AE%A1%E9%81%93%E7%9B%B8%E5%85%B3%E7%BB%93%E6%9E%84%E4%BD%93/">
+                            [Kernel Structure] pipe 管道
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            
+                            内核中有许多重要的结构体，对实现漏洞利用有着重要的作用。arttnba3师傅在内核方面有着很高的造诣，计划跟着a3师傅的博客读读源码，随笔以形成博客。
+
+【PWN.0x02】Linux Kernel Pwn II：常用结构体集合 - arttnba3’s blog
+
+内核中的pipe管道相关结构体【PWN.0x02】Linux Kernel Pwn II：0x08-pipe-管道相关 - a...
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Tue May 05 2026 13:15:29 GMT+0800">
+                
+                    2026-05-05
+                
+            </span>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Linux-Kernel-PWN/">Linux Kernel PWN</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2026/05/05/%E5%86%85%E6%A0%B8%E4%B8%AD%E7%9A%84pipe%E7%AE%A1%E9%81%93%E7%9B%B8%E5%85%B3%E7%BB%93%E6%9E%84%E4%BD%93/">阅读全文<span class="seo-reader-text">[Kernel Structure] pipe 管道</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                
+
+                
+                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
+                    <h3 class="home-article-title">
+                        <a href="/2026/05/05/%E5%86%85%E6%A0%B8%E5%AF%86%E9%92%A5%E7%AE%A1%E7%90%86%EF%BC%9A%E5%86%85%E6%A0%B8%E4%B8%AD%E7%9A%84%E2%80%9C%E8%8F%9C%E5%8D%95%E5%A0%86%E2%80%9D/">
+                            [Kernel Structure] Key-内核密钥管理
+                        </a>
+                    </h3>
+
+                    <div class="home-article-content markdown-body">
+                        
+                            
+                            内核中有许多重要的结构体，对实现漏洞利用有着重要的作用。arttnba3师傅在内核方面有着很高的造诣，计划跟着a3师傅的博客读读源码，随笔以形成博客。
+
+【PWN.0x02】Linux Kernel Pwn II：常用结构体集合 - arttnba3’s blog
+
+内核密钥管理：内核中的“菜单堆”【PWN.0x02】Linux Kernel Pwn II：0x0A-内核密钥管理：内核中的“...
+                        
+                    </div>
+
+                    <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fa-solid fa-calendars"></i>&nbsp;
+            <span class="home-article-date" data-date="Tue May 05 2026 13:15:29 GMT+0800">
+                
+                    2026-05-05
+                
+            </span>
+        </span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fa-solid fa-tags"></i>&nbsp;
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/Linux-Kernel-PWN/">Linux Kernel PWN</a>&nbsp;
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2026/05/05/%E5%86%85%E6%A0%B8%E5%AF%86%E9%92%A5%E7%AE%A1%E7%90%86%EF%BC%9A%E5%86%85%E6%A0%B8%E4%B8%AD%E7%9A%84%E2%80%9C%E8%8F%9C%E5%8D%95%E5%A0%86%E2%80%9D/">阅读全文<span class="seo-reader-text">[Kernel Structure] Key-内核密钥管理</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
+</div>
+
+                </div>
+            </li>
         
             <li class="home-article-item">
 
@@ -1033,182 +1200,6 @@ wtf？这激起了我的兴趣——毕竟250行的代码一点也不费时间�
                 </div>
             </li>
         
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
-                    <h3 class="home-article-title">
-                        <a href="/2026/01/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%8C%EF%BC%89Kernel-ROP/">
-                            [Linux-Kernel-PWN] Kernel ROP
-                        </a>
-                    </h3>
-
-                    <div class="home-article-content markdown-body">
-                        
-                            
-                            
-参考：
-
-Kernel ROP - CTF Wiki
-Linux Kernel Exploit 内核漏洞学习(2)-ROP - 知乎
-Linux内核ROP攻击提权实战-先知社区
-【PWN.0x00】Linux Kernel Pwn I：Basic Exploit to Kernel Pwn in CTF - arttnba3’s blog
-kernel&#x2F; - . - torval...
-                        
-                    </div>
-
-                    <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Sun Jan 18 2026 15:16:29 GMT+0800">
-                
-                    2026-01-18
-                
-            </span>
-        </span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fa-solid fa-tags"></i>&nbsp;
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/Linux-Kernel-PWN/">Linux Kernel PWN</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2026/01/18/Linux-Kernel-PWN%EF%BC%88%E4%BA%8C%EF%BC%89Kernel-ROP/">阅读全文<span class="seo-reader-text">[Linux-Kernel-PWN] Kernel ROP</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-                </div>
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
-                    <h3 class="home-article-title">
-                        <a href="/2025/12/29/Linux-Kernel-PWN%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
-                            [Linux-Kernel-PWN]Basic Knowledge
-                        </a>
-                    </h3>
-
-                    <div class="home-article-content markdown-body">
-                        
-                            
-                            一、基础知识
-参考自CTF-WIKI：
-
-基础知识 - CTF Wiki
-Kernel pwn CTF 入门 | Kiprey’s Blog
-
-
-
-操作系统内核
-操作系统内核（Operation System Kernel）本质上也是一种软件，可以看作是普通应用程式与硬件之间的一层中间层，其主要作用便是调度系统资源、控制 IO 设备、操作网络与文件系统等，并为上层应用提供便捷、抽象的应用接口...
-                        
-                    </div>
-
-                    <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Mon Dec 29 2025 20:48:39 GMT+0800">
-                
-                    2025-12-29
-                
-            </span>
-        </span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fa-solid fa-tags"></i>&nbsp;
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/Linux-Kernel-PWN/">Linux Kernel PWN</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2025/12/29/Linux-Kernel-PWN%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">阅读全文<span class="seo-reader-text">[Linux-Kernel-PWN]Basic Knowledge</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-                </div>
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                
-
-                
-                <div class="flex flex-col gap-5 px-7 pb-7 pt-7">
-                    <h3 class="home-article-title">
-                        <a href="/2025/12/21/2025RCTF-mstr/">
-                            [CPython-PWN]2025RCTF-mstr.py
-                        </a>
-                    </h3>
-
-                    <div class="home-article-content markdown-body">
-                        
-                            
-                            
-参考：RCTF 2025 mstr Writeup - RiK’s Blog
-
-2025RCTF的一道Python PWN题。前段时间学习了两道Python PWN题（CPython PWN | HackC0der’s Blog）主要是针对Python一切皆对象的特性进行利用。
-12345678910111213141516171819202122232425262728293031323...
-                        
-                    </div>
-
-                    <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fa-solid fa-calendars"></i>&nbsp;
-            <span class="home-article-date" data-date="Sun Dec 21 2025 22:59:39 GMT+0800">
-                
-                    2025-12-21
-                
-            </span>
-        </span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fa-solid fa-tags"></i>&nbsp;
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/CPython-PWN/">CPython PWN</a>&nbsp;
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2025/12/21/2025RCTF-mstr/">阅读全文<span class="seo-reader-text">[CPython-PWN]2025RCTF-mstr.py</span>&nbsp;<i class="fa-solid fa-angle-right"></i></a>
-</div>
-
-                </div>
-            </li>
-        
     </ul>
 
     <div class="home-paginator px-7 py-5">
@@ -1239,11 +1230,11 @@ Kernel pwn CTF 入门 | Kiprey’s Blog
                 
                 <p class="post-count space-x-0.5">
                     <span>
-                        共撰写了 12 篇文章
+                        共撰写了 15 篇文章
                     </span>
                     
                         <span>
-                            共 67.6k 字
+                            共 81k 字
                         </span>
                     
                 </p>
